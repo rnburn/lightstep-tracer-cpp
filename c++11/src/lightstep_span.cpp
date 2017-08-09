@@ -30,7 +30,7 @@ static std::tuple<SystemTime, SteadyTime> ComputeStartTimestamps(
         start_system_timestamp,
         opentracing::convert_time_point<SteadyClock>(start_system_timestamp)};
   }
-  return {start_system_timestamp, start_steady_timestamp};
+  return std::tuple<SystemTime, SteadyTime>{start_system_timestamp, start_steady_timestamp};
 }
 
 //------------------------------------------------------------------------------
