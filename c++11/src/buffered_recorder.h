@@ -18,8 +18,49 @@ namespace lightstep {
  */
 class BufferedRecorder : public Recorder {
  public:
+  typedef std::chrono::steady_clock::duration duration;
+  typedef std::chrono::steady_clock::time_point time_point;
+  typedef std::function<bool()> Predicate;
+
+  struct TestInterface {
+	  virtual bool wait_for(
+		                 std::condition_variable& write_cond_,
+		                 std::unique_lock<std::mutex>& lock,
+		                 const duration& rel_time,
+		                 Predicate pred ) = 0;
+
+	  virtual void wait_until(
+		               std::condition_variable& write_cond_,
+		               std::unique_lock<std::mutex>& lock,
+	                   const time_point& timeout_time,
+	                   Predicate pred ) = 0;
+
+	  virtual time_point now() = 0;
+  };
+  
+ private:
+    struct DefaultTestInterface : public TestInterface {
+  	    virtual bool wait_for(
+						 std::condition_variable& write_cond_,
+  		                 std::unique_lock<std::mutex>& lock,
+  		                 const duration& rel_time,
+  		                 Predicate pred );
+
+  	    virtual void wait_until(
+			           std::condition_variable& write_cond_,
+  		               std::unique_lock<std::mutex>& lock,
+  	                   const time_point& timeout_time,
+  	                   Predicate pred );
+
+	  virtual time_point now();
+    };
+
+ public:
+  
   BufferedRecorder(spdlog::logger& logger, LightStepTracerOptions options,
-                   std::unique_ptr<Transporter>&& transporter);
+                   std::unique_ptr<Transporter>&& transporter,
+				   const std::shared_ptr<TestInterface>& testInterface = 
+				       std::shared_ptr<TestInterface>(new DefaultTestInterface));
 
   BufferedRecorder(const BufferedRecorder&) = delete;
   BufferedRecorder(BufferedRecorder&&) = delete;
@@ -64,5 +105,7 @@ class BufferedRecorder : public Recorder {
 
   // Transporter through which to send span reports.
   std::unique_ptr<Transporter> transporter_;
+  
+  std::shared_ptr<TestInterface> testInterface_;
 };
 }  // namespace lightstep

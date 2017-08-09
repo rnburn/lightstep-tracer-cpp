@@ -2,16 +2,39 @@
 #include <exception>
 
 namespace lightstep {
+	
+bool BufferedRecorder::DefaultTestInterface::wait_for(
+				 std::condition_variable& write_cond_,
+                 std::unique_lock<std::mutex>& lock,
+                 const duration& rel_time,
+                 Predicate pred ) {
+  return write_cond_.wait_for(lock, rel_time, pred);
+}
+
+void BufferedRecorder::DefaultTestInterface::wait_until(
+	           std::condition_variable& write_cond_,
+               std::unique_lock<std::mutex>& lock,
+               const time_point& timeout_time,
+               Predicate pred ) {
+  write_cond_.wait_until(lock, timeout_time, pred);
+}
+
+BufferedRecorder::time_point BufferedRecorder::DefaultTestInterface::now() {
+	return std::chrono::steady_clock::now();
+}
+
 //------------------------------------------------------------------------------
 // Constructor
 //------------------------------------------------------------------------------
 BufferedRecorder::BufferedRecorder(spdlog::logger& logger,
                                    LightStepTracerOptions options,
-                                   std::unique_ptr<Transporter>&& transporter)
+                                   std::unique_ptr<Transporter>&& transporter,
+								   const std::shared_ptr<TestInterface>& testInterface)
     : logger_{logger},
       options_{std::move(options)},
       builder_{options_},
-      transporter_{std::move(transporter)} {
+      transporter_{std::move(transporter)},
+	  testInterface_(testInterface) {
   writer_ = std::thread(&BufferedRecorder::Write, this);
 }
 
@@ -21,7 +44,7 @@ BufferedRecorder::BufferedRecorder(spdlog::logger& logger,
 BufferedRecorder::~BufferedRecorder() {
   MakeWriterExit();
   writer_.join();
-}
+};
 
 //------------------------------------------------------------------------------
 // RecordSpan
@@ -58,7 +81,7 @@ bool BufferedRecorder::FlushWithTimeout(
 
   size_t wait_seq = encoding_seqno_ - (has_encoded ? 0 : 1);
 
-  auto result = write_cond_.wait_for(lock, timeout, [this, wait_seq]() {
+  auto result = testInterface_->wait_for(write_cond_, lock, timeout, [this, wait_seq]() {
     return write_exit_ || this->flushed_seqno_ >= wait_seq;
   });
   if (!result) {
@@ -74,12 +97,12 @@ bool BufferedRecorder::FlushWithTimeout(
 // Write
 //------------------------------------------------------------------------------
 void BufferedRecorder::Write() noexcept try {
-  auto next = std::chrono::steady_clock::now() + options_.reporting_period;
+  auto next = testInterface_->now() + options_.reporting_period;
 
   while (WaitForNextWrite(next)) {
     FlushOne();
 
-    auto end = std::chrono::steady_clock::now();
+    auto end = testInterface_->now();
     auto elapsed = end - next;
 
     if (elapsed > options_.reporting_period) {
@@ -139,7 +162,7 @@ void BufferedRecorder::FlushOne() {
     if (!success) {
       dropped_spans_ += save_dropped + save_pending;
     }
-  }
+  };
 }
 
 //------------------------------------------------------------------------------
@@ -157,7 +180,7 @@ void BufferedRecorder::MakeWriterExit() {
 bool BufferedRecorder::WaitForNextWrite(
     const std::chrono::steady_clock::time_point& next) {
   std::unique_lock<std::mutex> lock{write_mutex_};
-  write_cond_.wait_until(lock, next, [this]() {
+  testInterface_->wait_until(write_cond_, lock, next, [this]() {
     return this->write_exit_ ||
            this->builder_.num_pending_spans() >= options_.max_buffered_spans;
   });
