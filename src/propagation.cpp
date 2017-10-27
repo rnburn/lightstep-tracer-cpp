@@ -1,12 +1,11 @@
 #include "propagation.h"
 #include <lightstep_carrier.pb.h>
-#include <algorithm>
-#include <cctype>
 #include <cstdint>
 #include <functional>
 #include <iomanip>
 #include <ios>
 #include <sstream>
+#include "utility.h"
 
 namespace lightstep {
 #define PREFIX_TRACER_STATE "ot-tracer-"
@@ -228,14 +227,6 @@ opentracing::expected<bool> ExtractSpanContext(
 opentracing::expected<bool> ExtractSpanContext(
     const opentracing::HTTPHeadersReader& carrier, uint64_t& trace_id,
     uint64_t& span_id, std::unordered_map<std::string, std::string>& baggage) {
-  auto iequals = [](opentracing::string_view lhs,
-                    opentracing::string_view rhs) {
-    return lhs.length() == rhs.length() &&
-           std::equal(std::begin(lhs), std::end(lhs), std::begin(rhs),
-                      [](char a, char b) {
-                        return std::tolower(a) == std::tolower(b);
-                      });
-  };
   return ExtractSpanContext(carrier, trace_id, span_id, baggage, iequals);
 }
 }  // namespace lightstep

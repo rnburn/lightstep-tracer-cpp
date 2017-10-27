@@ -28,4 +28,7 @@ collector::KeyValue ToKeyValue(opentracing::string_view key,
 // Logs any information returned by the collector.
 void LogReportResponse(Logger& logger, bool verbose,
                        const collector::ReportResponse& response);
+
+// Compares strings case insensitively
+bool iequals(opentracing::string_view lhs, opentracing::string_view rhs);
 }  // namespace lightstep

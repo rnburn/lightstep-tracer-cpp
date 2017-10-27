@@ -8,6 +8,8 @@
 #include <random>
 #include <sstream>
 #include <stdexcept>
+#include <algorithm>
+#include <cctype>
 
 namespace lightstep {
 //------------------------------------------------------------------------------
@@ -234,5 +236,15 @@ void LogReportResponse(Logger& logger, bool verbose,
       logger.Info(message);
     }
   }
+}
+
+//------------------------------------------------------------------------------
+// iequals
+//------------------------------------------------------------------------------
+bool iequals(opentracing::string_view lhs, opentracing::string_view rhs) {
+  return lhs.length() == rhs.length() &&
+         std::equal(
+             std::begin(lhs), std::end(lhs), std::begin(rhs),
+             [](char a, char b) { return std::tolower(a) == std::tolower(b); });
 }
 }  // namespace lightstep

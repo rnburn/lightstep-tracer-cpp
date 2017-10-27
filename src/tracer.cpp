@@ -177,8 +177,8 @@ std::shared_ptr<LightStepTracer> MakeLightStepTracer(
     return nullptr;
   }
 } catch (const /*spdlog::spdlog_ex&*/ std::exception& e) {
-  // Use fprintf to print the error because std::cerr can throw the user
-  // configures by calling std::cerr::exceptions.
+  // Use fprintf to print the error because std::cerr can throw if a user
+  // configures it by calling std::cerr::exceptions.
   std::fprintf(stderr, "Failed to initialize logger: %s\n", e.what());
   return nullptr;
 }

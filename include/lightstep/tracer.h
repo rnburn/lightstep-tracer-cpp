@@ -106,6 +106,11 @@ struct LightStepTracerOptions {
   // `metrics_observer` can be optionally provided to track LightStep tracer
   // events. See MetricsObserver.
   std::unique_ptr<MetricsObserver> metrics_observer;
+
+  // Constructs LightStepTracerOptions from a json representation of the
+  // options.
+  static opentracing::expected<LightStepTracerOptions> FromJson(
+      opentracing::string_view options_json) noexcept;
 };
 
 // The LightStepTracer interface can be used by custom carriers that need more

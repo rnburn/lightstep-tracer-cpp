@@ -136,7 +136,11 @@ set(LIGHTSTEP_SRCS src/utility.cpp
                    src/lightstep_span.cpp
                    src/lightstep_tracer_impl.cpp
                    src/transporter.cpp
+                   src/options.cpp
                    src/tracer.cpp)
+if (BUILD_SHARED_LIBS)
+  list(APPEND LIGHTSTEP_SRCS src/dynamic_loading.cpp)
+endif()
 
 add_library(lightstep_tracer $<TARGET_OBJECTS:lightstep_protobuf>
                              ${LIGHTSTEP_SRCS})
