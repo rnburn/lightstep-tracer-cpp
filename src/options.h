@@ -1,4 +1,3 @@
 #include <lightstep/tracer.h>
 
-namespace lightstep {
-} // namespace lightstep
+namespace lightstep {}  // namespace lightstep

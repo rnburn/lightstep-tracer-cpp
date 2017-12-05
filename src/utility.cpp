@@ -3,13 +3,13 @@
 #include <opentracing/string_view.h>
 #include <opentracing/value.h>
 #include <unistd.h>
+#include <algorithm>
+#include <cctype>
 #include <cmath>
 #include <iomanip>
 #include <random>
 #include <sstream>
 #include <stdexcept>
-#include <algorithm>
-#include <cctype>
 
 namespace lightstep {
 //------------------------------------------------------------------------------

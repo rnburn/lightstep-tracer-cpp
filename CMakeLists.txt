@@ -6,7 +6,7 @@ project(lightstep-tracer)
 # Version information
 
 set(LIGHTSTEP_VERSION_MAJOR "0")
-set(LIGHTSTEP_VERSION_MINOR "4")
+set(LIGHTSTEP_VERSION_MINOR "5")
 set(LIGHTSTEP_VERSION_PATCH "0")
 set(LIGHTSTEP_VERSION_STRING
   "${LIGHTSTEP_VERSION_MAJOR}.${LIGHTSTEP_VERSION_MINOR}.${LIGHTSTEP_VERSION_PATCH}")
@@ -29,9 +29,9 @@ include(CPack)
 # ==============================================================================
 # Set up options
 
-option(LS_WITH_ASAN "Generate tests using address-sanitizer." OFF)
-option(LS_WITH_TSAN "Generate tests using thread-sanitizer." OFF)
-option(LS_WITH_GRPC "Build with support for gRPC." ON)
+option(WITH_ASAN "Generate tests using address-sanitizer." OFF)
+option(WITH_TSAN "Generate tests using thread-sanitizer." OFF)
+option(WITH_GRPC "Build with support for gRPC." ON)
 option(ENABLE_LINTING "Run clang-tidy on sources if available." ON)
 
 # ==============================================================================
@@ -59,16 +59,22 @@ endif()
 
 find_package(Protobuf REQUIRED)
 
-find_path(OPENTRACING_INCLUDE_DIR NAMES opentracing/tracer.h)
-find_library(OPENTRACING_LIB opentracing)
+if (NOT DEFINED OPENTRACING_INCLUDE_DIR)
+  find_path(OPENTRACING_INCLUDE_DIR NAMES opentracing/tracer.h)
+endif()
+
+if (NOT DEFINED OPENTRACING_LIBRARY)
+  find_library(OPENTRACING_LIBRARY opentracing)
+endif()
 
 include_directories(SYSTEM ${OPENTRACING_INCLUDE_DIR})
 include_directories(SYSTEM ${PROTOBUF_INCLUDE_DIRS})
 
-set(LIGHTSTEP_LINK_LIBRARIES ${OPENTRACING_LIB}
+set(LIGHTSTEP_LINK_LIBRARIES ${OPENTRACING_LIBRARY}
                              ${PROTOBUF_LIBRARIES})
 
-if (LS_WITH_GRPC)                           
+if (WITH_GRPC)                           
+  set(LIGHTSTEP_USE_GRPC 1)
   find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin)
   if (NOT GRPC_CPP_PLUGIN)
     message(FATAL_ERROR "grpc_cpp_plugin not found!")
@@ -83,20 +89,20 @@ endif()
 # ==============================================================================
 # Configure sanitizers
 
-set(WITH_ASAN OFF)
-if (LS_WITH_ASAN AND (("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang") OR
+set(LIGHTSTEP_USE_ASAN OFF)
+if (WITH_ASAN AND (("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang") OR
   ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND
    "${COMPILER_VERSION}" VERSION_GREATER "4.8")))
-   set(WITH_ASAN ON)
+   set(LIGHTSTEP_USE_ASAN ON)
    set(ASAN_CXX_FLAGS -O1 -g -fsanitize=address -fno-omit-frame-pointer)
    set(ASAN_LD_FLAGS -fsanitize=address)
 endif()
 
-set(WITH_TSAN OFF)
-if (LS_WITH_TSAN AND (("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang") OR
+set(LIGHTSTEP_USE_TSAN OFF)
+if (WITH_TSAN AND (("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang") OR
   ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND
    "${COMPILER_VERSION}" VERSION_GREATER "4.8")))
-   set(WITH_TSAN ON)
+   set(LIGHTSTEP_USE_TSAN ON)
    set(TSAN_CXX_FLAGS -O1 -g -fsanitize=thread)
    set(TSAN_LD_FLAGS -fsanitize=thread)
 endif()
@@ -113,10 +119,8 @@ install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/lightstep
 # ==============================================================================
 # Build LightStep tracer library
 
-include_directories(SYSTEM 3rd_party/include)
-
-# Needed to make some of the internal relative includes work.
-include_directories(SYSTEM 3rd_party/include/lightstep)
+add_subdirectory(3rd_party)
+include_directories(SYSTEM ${LIGHTSTEP_THIRD_PARTY_INCLUDES})
 
 include_directories(include)
 install(DIRECTORY include/lightstep DESTINATION include)
@@ -125,6 +129,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 include(LightStepProtobuf)
 
 set(LIGHTSTEP_SRCS src/utility.cpp
+                   src/in_memory_stream.cpp
                    src/logger.cpp
                    src/propagation.cpp
                    src/binary_carrier.cpp
@@ -143,6 +148,7 @@ if (BUILD_SHARED_LIBS)
 endif()
 
 add_library(lightstep_tracer $<TARGET_OBJECTS:lightstep_protobuf>
+                             $<TARGET_OBJECTS:lightstep_3rd_party>
                              ${LIGHTSTEP_SRCS})
 target_compile_options(lightstep_tracer PUBLIC ${WARNING_CXX_FLAGS})
 if (ENABLE_LINTING)
@@ -159,7 +165,7 @@ target_link_libraries(lightstep_tracer ${LIGHTSTEP_LINK_LIBRARIES})
 # ==============================================================================
 # Build optional sanitized versions of the LightStep tracer
 
-if (WITH_ASAN)
+if (LIGHTSTEP_USE_ASAN)
   add_library(lightstep_tracer_asan $<TARGET_OBJECTS:lightstep_protobuf>
                                     ${LIGHTSTEP_SRCS})
   target_compile_options(lightstep_tracer_asan PUBLIC ${ASAN_CXX_FLAGS})
@@ -168,7 +174,7 @@ if (WITH_ASAN)
     PROPERTIES LINK_FLAGS "${ASAN_LD_FLAGS}")
 endif()
 
-if (WITH_TSAN)
+if (LIGHTSTEP_USE_TSAN)
   add_library(lightstep_tracer_tsan $<TARGET_OBJECTS:lightstep_protobuf>
                                     ${LIGHTSTEP_SRCS})
   target_compile_options(lightstep_tracer_tsan PUBLIC ${TSAN_CXX_FLAGS})

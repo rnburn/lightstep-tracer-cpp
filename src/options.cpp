@@ -1,7 +1,7 @@
 #include "options.h"
-#include "utility.h"
 #include <lightstep/nlohmann/json.hpp>
 #include <string>
+#include "utility.h"
 
 namespace lightstep {
 //------------------------------------------------------------------------------
@@ -9,12 +9,12 @@ namespace lightstep {
 //------------------------------------------------------------------------------
 static json::number_integer_t get_integer(const json& value) {
   if (value.is_string()) try {
-    return std::stoi(value.get_ref<const std::string&>());
-  } catch(const std::invalid_argument& /*error*/) {
-    throw std::domain_error{"not a valid integer"};
-  } catch (const std::out_of_range& /*error*/) {
-    throw std::domain_error{"out of range"};
-  }
+      return std::stoi(value.get_ref<const std::string&>());
+    } catch (const std::invalid_argument& /*error*/) {
+      throw std::domain_error{"not a valid integer"};
+    } catch (const std::out_of_range& /*error*/) {
+      throw std::domain_error{"out of range"};
+    }
   return value.get<json::number_integer_t>();
 }
 
@@ -54,7 +54,7 @@ opentracing::expected<LightStepTracerOptions> LightStepTracerOptions::FromJson(
     return opentracing::make_unexpected(std::error_code{});
   }
   LightStepTracerOptions result;
-  for (auto i = std::begin(*object); i!= std::end(*object); ++i) {
+  for (auto i = std::begin(*object); i != std::end(*object); ++i) {
     if (i->first == "component_name") {
       try {
         result.component_name = std::move(i->second.get_ref<json::string_t&>());
@@ -92,7 +92,7 @@ opentracing::expected<LightStepTracerOptions> LightStepTracerOptions::FromJson(
         return opentracing::make_unexpected(std::error_code{});
       }
     }
-  } 
+  }
   return opentracing::expected<LightStepTracerOptions>{std::move(result)};
 }
-} // namespace lightstep
+}  // namespace lightstep
