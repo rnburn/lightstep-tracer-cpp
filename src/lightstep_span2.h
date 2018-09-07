@@ -95,6 +95,32 @@ class LightStepSpan2 final : public opentracing::Span,
   Logger& logger_;
   Recorder& recorder_;
 
+  std::atomic<bool> is_finished_{false};
+
+  uint64_t trace_id_;
+  uint64_t span_id_;
+
+  opentracing::string_view operation_name_;
+
+  uint64_t start_timestamp_seconds_since_epoch_;
+  uint32_t start_timestamp_nano_fraction_;
+
+  std::chrono::steady_clock::time_point start_steady_timestamp_;
+  uint64_t duration_micros_;
+
+  size_t span_context_serialization_size_;
+  size_t start_timestamp_serialization_size_;
+  size_t serialization_size_;
+
   google::protobuf::ArenaOptions GetArenaOptions();
+
+  void ComputeSpanContextSerializationSize();
+  void ComputeStartTimestampSerializationSize();
+  void ComputeSerializationSizes();
+
+  void Serialize(google::protobuf::io::CodedOutputStream& ostream);
+
+  static void Serialize(void* context,
+                        google::protobuf::io::CodedOutputStream& ostream);
 };
 } // namespace lightstep

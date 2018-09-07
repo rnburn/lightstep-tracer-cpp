@@ -1,10 +1,52 @@
 #include "lightstep_span2.h"
 
+#include "utility.h"
+#include "serialization.h"
+#include "lightstep-tracer-common/collector.pb.h"
+
 #include <cstdlib>
 #include <memory>
+#include <iterator>
+#include <algorithm>
+
+using opentracing::SystemTime;
+using opentracing::SystemClock;
+using opentracing::SteadyClock;
+using opentracing::SteadyTime;
+
+using ProtoSpan = lightstep::collector::Span;
+using ProtoSpanContext = lightstep::collector::SpanContext;
 
 namespace lightstep {
 const size_t DefaultInitialBlockSize = 512;
+
+//------------------------------------------------------------------------------
+// ComputeStartTimestamps
+//------------------------------------------------------------------------------
+static std::tuple<SystemTime, SteadyTime> ComputeStartTimestamps(
+    const SystemTime& start_system_timestamp,
+    const SteadyTime& start_steady_timestamp) {
+  // If neither the system nor steady timestamps are set, get the tme from the
+  // respective clocks; otherwise, use the set timestamp to initialize the
+  // other.
+  if (start_system_timestamp == SystemTime() &&
+      start_steady_timestamp == SteadyTime()) {
+    return std::tuple<SystemTime, SteadyTime>{SystemClock::now(),
+                                              SteadyClock::now()};
+  }
+  if (start_system_timestamp == SystemTime()) {
+    return std::tuple<SystemTime, SteadyTime>{
+        opentracing::convert_time_point<SystemClock>(start_steady_timestamp),
+        start_steady_timestamp};
+  }
+  if (start_steady_timestamp == SteadyTime()) {
+    return std::tuple<SystemTime, SteadyTime>{
+        start_system_timestamp,
+        opentracing::convert_time_point<SteadyClock>(start_system_timestamp)};
+  }
+  return std::tuple<SystemTime, SteadyTime>{start_system_timestamp,
+                                            start_steady_timestamp};
+}
 
 //------------------------------------------------------------------------------
 // operator new
@@ -49,12 +91,36 @@ LightStepSpan2::LightStepSpan2(
     : arena_{GetArenaOptions()},
       tracer_{std::move(tracer)},
       logger_{logger},
-      recorder_{recorder} {}
+      recorder_{recorder} {
+  // Set operation name.
+  auto operation_name_data = google::protobuf::Arena::CreateArray<char>(
+      &arena_, operation_name.size());
+  std::copy(std::begin(operation_name), std::end(operation_name),
+            operation_name_data);
+  operation_name_ =
+      opentracing::string_view{operation_name_data, operation_name.size()};
+
+  // Set the start timestamps.
+  std::chrono::system_clock::time_point start_system_timestamp;
+  std::tie(start_system_timestamp, start_steady_timestamp_) =
+      ComputeStartTimestamps(options.start_system_timestamp,
+                             options.start_steady_timestamp);
+  std::tie(start_timestamp_seconds_since_epoch_,
+           start_timestamp_nano_fraction_) =
+      ProtobufFormatTimestamp(start_system_timestamp);
+
+  // Set IDs.
+  trace_id_ = GenerateId();
+  span_id_ = GenerateId();
+}
 
 //------------------------------------------------------------------------------
 // Destructor
 //------------------------------------------------------------------------------
 LightStepSpan2::~LightStepSpan2() {
+  if (!is_finished_) {
+    Finish();
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -62,6 +128,10 @@ LightStepSpan2::~LightStepSpan2() {
 //------------------------------------------------------------------------------
 void LightStepSpan2::FinishWithOptions(
     const opentracing::FinishSpanOptions& options) noexcept try {
+  // Ensure the span is only finished once.
+  if (is_finished_.exchange(true)) {
+    return;
+  }
 } catch (const std::exception& e) {
   logger_.Error("FinishWithOptions failed: ", e.what());
 }
@@ -127,5 +197,60 @@ void LightStepSpan2::ForeachBaggageItem(
 //------------------------------------------------------------------------------
 bool LightStepSpan2::sampled() const noexcept {
   return true;
+}
+
+//------------------------------------------------------------------------------
+// ComputeSpanContextSerializationSize
+//------------------------------------------------------------------------------
+void LightStepSpan2::ComputeSpanContextSerializationSize() {
+  span_context_serialization_size_ =
+      ComputeSerializationSize<ProtoSpanContext::kTraceIdFieldNumber>(
+          trace_id_) +
+      ComputeSerializationSize<ProtoSpanContext::kSpanIdFieldNumber>(
+          span_id_);
+}
+
+//------------------------------------------------------------------------------
+// ComputeStartTimestampSerializationSize
+//------------------------------------------------------------------------------
+void LightStepSpan2::ComputeStartTimestampSerializationSize() {
+  start_timestamp_serialization_size_ =
+      ComputeSerializationSize<1>(start_timestamp_seconds_since_epoch_) +
+      ComputeSerializationSize<2>(start_timestamp_nano_fraction_);
+}
+
+//------------------------------------------------------------------------------
+// ComputeSerializationSizes
+//------------------------------------------------------------------------------
+void LightStepSpan2::ComputeSerializationSizes() {
+  ComputeSpanContextSerializationSize();
+  ComputeStartTimestampSerializationSize();
+  serialization_size_ =
+      // span_context
+      ComputeLengthDelimitedSerializationSize<
+          ProtoSpan::kSpanContextFieldNumber>(
+          span_context_serialization_size_) +
+      // operation_name
+      ComputeLengthDelimitedSerializationSize<
+          ProtoSpan::kOperationNameFieldNumber>(operation_name_.size()) +
+      // start_timestamp
+      ComputeLengthDelimitedSerializationSize<
+          ProtoSpan::kStartTimestampFieldNumber>(
+          start_timestamp_serialization_size_) +
+      // duration_micros
+      ComputeSerializationSize<ProtoSpan::kDurationMicrosFieldNumber>(
+          duration_micros_);
+}
+
+//------------------------------------------------------------------------------
+// Serialize
+//------------------------------------------------------------------------------
+void LightStepSpan2::Serialize(
+    google::protobuf::io::CodedOutputStream& ostream) {
+}
+
+void LightStepSpan2::Serialize(
+    void* context, google::protobuf::io::CodedOutputStream& ostream) {
+  static_cast<LightStepSpan2*>(context)->Serialize(ostream);
 }
 } // namespace lightstep

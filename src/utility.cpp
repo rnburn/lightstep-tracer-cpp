@@ -18,17 +18,30 @@
 
 namespace lightstep {
 //------------------------------------------------------------------------------
-// ToTimestamp
+// ProtobufFormatTimestamp
 //------------------------------------------------------------------------------
-google::protobuf::Timestamp ToTimestamp(
+std::tuple<uint64_t, uint32_t> ProtobufFormatTimestamp(
     const std::chrono::system_clock::time_point& t) {
   using namespace std::chrono;
   auto nanos = duration_cast<nanoseconds>(t.time_since_epoch()).count();
   google::protobuf::Timestamp ts;
   const uint64_t nanosPerSec = 1000000000;
-  ts.set_seconds(nanos / nanosPerSec);
-  ts.set_nanos(nanos % nanosPerSec);
-  return ts;
+  return {static_cast<uint64_t>(nanos / nanosPerSec),
+          static_cast<uint32_t>(nanos % nanosPerSec)};
+}
+//------------------------------------------------------------------------------
+// ToTimestamp
+//------------------------------------------------------------------------------
+google::protobuf::Timestamp ToTimestamp(
+    const std::chrono::system_clock::time_point& t) {
+  using namespace std::chrono;
+  uint64_t seconds_since_epoch;
+  uint32_t nano_fraction;
+  std::tie(seconds_since_epoch, nano_fraction) = ProtobufFormatTimestamp(t);
+  google::protobuf::Timestamp result;
+  result.set_seconds(seconds_since_epoch);
+  result.set_nanos(nano_fraction);
+  return result;
 }
 
 //------------------------------------------------------------------------------

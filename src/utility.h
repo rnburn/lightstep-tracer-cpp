@@ -10,6 +10,12 @@
 #include "logger.h"
 
 namespace lightstep {
+// Breaks the timestamp down into seconds past epoch and nanosecond fraction
+// to match that used by google in protobuf.
+// See https://github.com/protocolbuffers/protobuf/blob/8489612dadd3775ffbba029a583b6f00e91d0547/src/google/protobuf/timestamp.proto
+std::tuple<uint64_t, uint32_t> ProtobufFormatTimestamp(
+    const std::chrono::system_clock::time_point& t);
+
 // Convert a std::chrono::system_clock::time_point to the time value used
 // by protobuf.
 google::protobuf::Timestamp ToTimestamp(
