@@ -204,9 +204,9 @@ bool LightStepSpan2::sampled() const noexcept {
 //------------------------------------------------------------------------------
 void LightStepSpan2::ComputeSpanContextSerializationSize() {
   span_context_serialization_size_ =
-      ComputeSerializationSize<ProtoSpanContext::kTraceIdFieldNumber>(
+      ComputeVarintSerializationSize<ProtoSpanContext::kTraceIdFieldNumber>(
           trace_id_) +
-      ComputeSerializationSize<ProtoSpanContext::kSpanIdFieldNumber>(
+      ComputeVarintSerializationSize<ProtoSpanContext::kSpanIdFieldNumber>(
           span_id_);
 }
 
@@ -215,8 +215,8 @@ void LightStepSpan2::ComputeSpanContextSerializationSize() {
 //------------------------------------------------------------------------------
 void LightStepSpan2::ComputeStartTimestampSerializationSize() {
   start_timestamp_serialization_size_ =
-      ComputeSerializationSize<1>(start_timestamp_seconds_since_epoch_) +
-      ComputeSerializationSize<2>(start_timestamp_nano_fraction_);
+      ComputeVarintSerializationSize<1>(start_timestamp_seconds_since_epoch_) +
+      ComputeVarintSerializationSize<2>(start_timestamp_nano_fraction_);
 }
 
 //------------------------------------------------------------------------------
@@ -238,7 +238,7 @@ void LightStepSpan2::ComputeSerializationSizes() {
           ProtoSpan::kStartTimestampFieldNumber>(
           start_timestamp_serialization_size_) +
       // duration_micros
-      ComputeSerializationSize<ProtoSpan::kDurationMicrosFieldNumber>(
+      ComputeVarintSerializationSize<ProtoSpan::kDurationMicrosFieldNumber>(
           duration_micros_);
 }
 

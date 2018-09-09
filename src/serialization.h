@@ -36,19 +36,19 @@ struct StaticKeySerializationSize {
 };
 
 //------------------------------------------------------------------------------
-// ComputeSerializationSize
+// ComputeVarintSerializationSize
 //------------------------------------------------------------------------------
 template <size_t FieldNumber>
-size_t ComputeSerializationSize(uint64_t x) {
+size_t ComputeVarintSerializationSize(uint64_t x) {
   return StaticKeySerializationSize<FieldNumber, WireType::Varint>::value +
          google::protobuf::io::CodedOutputStream::VarintSize64(x);
 }
 
 //------------------------------------------------------------------------------
-// ComputeSerializationSize
+// ComputeVarintSerializationSize
 //------------------------------------------------------------------------------
 template <size_t FieldNumber>
-size_t ComputeSerializationSize(uint32_t x) {
+size_t ComputeVarintSerializationSize(uint32_t x) {
   return StaticKeySerializationSize<FieldNumber, WireType::Varint>::value +
          google::protobuf::io::CodedOutputStream::VarintSize32(x);
 }
