@@ -61,11 +61,11 @@ class LightStepSpan2 final : public opentracing::Span,
   bool sampled() const noexcept override;
 
   uint64_t trace_id() const noexcept override {
-    return 0;
+    return trace_id_;
   }
 
   uint64_t span_id() const noexcept override {
-    return 0;
+    return span_id_;
   }
 
   virtual opentracing::expected<void> Inject(
@@ -87,6 +87,17 @@ class LightStepSpan2 final : public opentracing::Span,
       const opentracing::HTTPHeadersWriter& writer) const override {
     /* return this->InjectImpl(propagation_options, writer); */
     return {};
+  }
+
+
+  size_t ComputeSerializationSizeForTesting() {
+    ComputeSerializationSizes();
+    return serialization_size_;
+  }
+
+  void SerializeForTesting(google::protobuf::io::CodedOutputStream& ostream) {
+    ComputeSerializationSizes();
+    Serialize(ostream);
   }
 
  private:
@@ -118,10 +129,10 @@ class LightStepSpan2 final : public opentracing::Span,
   void ComputeStartTimestampSerializationSize();
   void ComputeSerializationSizes();
 
+  void Serialize(google::protobuf::io::CodedOutputStream& ostream);
+
   void SerializeSpanContext(google::protobuf::io::CodedOutputStream& ostream);
   void SerializeStartTimestamp(google::protobuf::io::CodedOutputStream& ostream);
-
-  void Serialize(google::protobuf::io::CodedOutputStream& ostream);
 
   static void Serialize(void* context,
                         google::protobuf::io::CodedOutputStream& ostream);

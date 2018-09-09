@@ -14,6 +14,7 @@
 #include "lightstep-tracer-common/collector.pb.h"
 #include "lightstep_immutable_span_context.h"
 #include "lightstep_tracer_impl.h"
+#include "lightstep_tracer_impl2.h"
 #include "logger.h"
 #include "manual_recorder.h"
 #include "satellite_stream_transporter.h"
@@ -178,7 +179,7 @@ static std::shared_ptr<LightStepTracer> MakeStreamTracer(
   propagation_options.use_single_key = options.use_single_key_propagation;
   auto recorder = std::unique_ptr<Recorder>{
       new StreamRecorder{*logger, std::move(options), std::move(transporter)}};
-  return std::shared_ptr<LightStepTracer>{new LightStepTracerImpl{
+  return std::shared_ptr<LightStepTracer>{new LightStepTracerImpl2{
       std::move(logger), propagation_options, std::move(recorder)}};
 }
 

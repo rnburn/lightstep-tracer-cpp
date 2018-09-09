@@ -132,6 +132,16 @@ void LightStepSpan2::FinishWithOptions(
   if (is_finished_.exchange(true)) {
     return;
   }
+
+  auto finish_timestamp = options.finish_steady_timestamp;
+  if (finish_timestamp == SteadyTime()) {
+    finish_timestamp = SteadyClock::now();
+  }
+
+  // Set timing information.
+  auto duration = finish_timestamp - start_steady_timestamp_;
+  duration_micros_ =
+      std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
 } catch (const std::exception& e) {
   logger_.Error("FinishWithOptions failed: ", e.what());
 }

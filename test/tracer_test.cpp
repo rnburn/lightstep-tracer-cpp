@@ -2,14 +2,51 @@
 #include <opentracing/ext/tags.h>
 #include <opentracing/noop.h>
 #include "../src/lightstep_tracer_impl.h"
+#include "../src/lightstep_tracer_impl2.h"
 #include "../src/utility.h"
+#include "../src/lightstep_span2.h"
 #include "in_memory_recorder.h"
 #include "utility.h"
+
+#include <google/protobuf/io/zero_copy_stream_impl.h>
+#include <google/protobuf/io/coded_stream.h>
+#include <sstream>
+#include <thread>
 
 #define CATCH_CONFIG_MAIN
 #include <lightstep/catch2/catch.hpp>
 using namespace lightstep;
 using namespace opentracing;
+
+//------------------------------------------------------------------------------
+// ToProtoSpan
+//------------------------------------------------------------------------------
+static collector::Span ToProtoSpan(opentracing::Span& span) {
+  std::ostringstream oss;
+  auto& ls_span = dynamic_cast<lightstep::LightStepSpan2&>(span);
+
+  // Note: The destructors for google protobuf's streams need to run in order
+  // to flush the results to the stringstream
+  {
+    google::protobuf::io::OstreamOutputStream ostream_output_stream{&oss};
+    google::protobuf::io::CodedOutputStream coded_output_stream{
+        &ostream_output_stream};
+    ls_span.SerializeForTesting(coded_output_stream);
+  }
+  auto s = oss.str();
+  if (s.size() != ls_span.ComputeSerializationSizeForTesting()) {
+    std::cerr << "Serialization size is incorrect\n";
+    std::terminate();
+  }
+
+  collector::Span result;
+  if (!result.ParseFromString(oss.str())) {
+    std::cerr << "Failed to deserialize the span.\n";
+    std::terminate();
+  }
+
+  return result;
+}
 
 TEST_CASE("tracer") {
   auto recorder = new InMemoryRecorder{};
@@ -182,5 +219,22 @@ TEST_CASE("tracer") {
     options.log_records = {{SystemClock::now(), {{"abc", 123}}}};
     span->FinishWithOptions(options);
     CHECK(recorder->top().logs().size() == 1);
+  }
+}
+
+TEST_CASE("serialization") {
+  auto recorder = new InMemoryRecorder{};
+  auto tracer = std::shared_ptr<opentracing::Tracer>{new LightStepTracerImpl2{
+      PropagationOptions{}, std::unique_ptr<Recorder>{recorder}}};
+
+  auto span = tracer->StartSpan("a");
+  CHECK(span);
+  std::this_thread::sleep_for(std::chrono::microseconds{10});
+  span->Finish();
+
+  SECTION("A span can be serialized/deserialized without loss of data.") {
+    auto proto_span = ToProtoSpan(*span);
+    // TODO: Replace with real tests.
+    /* CHECK(proto_span.DebugString() == ""); */
   }
 }

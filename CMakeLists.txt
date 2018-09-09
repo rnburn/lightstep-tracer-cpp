@@ -175,6 +175,7 @@ set(LIGHTSTEP_SRCS src/utility.cpp
                    src/lightstep_span.cpp
                    src/lightstep_span2.cpp
                    src/lightstep_tracer_impl.cpp
+                   src/lightstep_tracer_impl2.cpp
                    src/lightstep_tracer_factory.cpp
                    src/transporter.cpp
                    src/satellite_stream_transporter.cpp
