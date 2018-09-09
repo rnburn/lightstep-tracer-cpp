@@ -118,6 +118,9 @@ class LightStepSpan2 final : public opentracing::Span,
   void ComputeStartTimestampSerializationSize();
   void ComputeSerializationSizes();
 
+  void SerializeSpanContext(google::protobuf::io::CodedOutputStream& ostream);
+  void SerializeStartTimestamp(google::protobuf::io::CodedOutputStream& ostream);
+
   void Serialize(google::protobuf::io::CodedOutputStream& ostream);
 
   static void Serialize(void* context,

@@ -243,10 +243,45 @@ void LightStepSpan2::ComputeSerializationSizes() {
 }
 
 //------------------------------------------------------------------------------
+// SerializeSpanContext
+//------------------------------------------------------------------------------
+void LightStepSpan2::SerializeSpanContext(
+    google::protobuf::io::CodedOutputStream& ostream) {
+  SerializeVarint<ProtoSpanContext::kTraceIdFieldNumber>(ostream, trace_id_);
+  SerializeVarint<ProtoSpanContext::kSpanIdFieldNumber>(ostream, span_id_);
+}
+
+//------------------------------------------------------------------------------
+// LightStepSpan2
+//------------------------------------------------------------------------------
+void LightStepSpan2::SerializeStartTimestamp(
+    google::protobuf::io::CodedOutputStream& ostream) {
+  SerializeVarint<1>(ostream, start_timestamp_seconds_since_epoch_);
+  SerializeVarint<2>(ostream, start_timestamp_nano_fraction_);
+}
+
+//------------------------------------------------------------------------------
 // Serialize
 //------------------------------------------------------------------------------
 void LightStepSpan2::Serialize(
     google::protobuf::io::CodedOutputStream& ostream) {
+  // span context
+  SerializeKeyLength<ProtoSpan::kSpanContextFieldNumber>(
+      ostream, span_context_serialization_size_);
+  SerializeSpanContext(ostream);
+
+  // operation_name
+  SerializeString<ProtoSpan::kOperationNameFieldNumber>(ostream,
+                                                        operation_name_);
+
+  // start_timestamp
+  SerializeKeyLength<ProtoSpan::kStartTimestampFieldNumber>(
+      ostream, start_timestamp_serialization_size_);
+  SerializeStartTimestamp(ostream);
+
+  // duration_micros
+  SerializeVarint<ProtoSpan::kDurationMicrosFieldNumber>(ostream,
+                                                         duration_micros_);
 }
 
 void LightStepSpan2::Serialize(
