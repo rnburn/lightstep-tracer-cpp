@@ -142,6 +142,11 @@ void LightStepSpan2::FinishWithOptions(
   auto duration = finish_timestamp - start_steady_timestamp_;
   duration_micros_ =
       std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
+
+  // Pass the span to the recorder
+  ComputeSerializationSizes();
+  recorder_.RecordSpan(&LightStepSpan2::Serialize, static_cast<void*>(this),
+                       serialization_size_);
 } catch (const std::exception& e) {
   logger_.Error("FinishWithOptions failed: ", e.what());
 }
@@ -271,9 +276,9 @@ void LightStepSpan2::SerializeStartTimestamp(
 }
 
 //------------------------------------------------------------------------------
-// Serialize
+// SerializeImpl
 //------------------------------------------------------------------------------
-void LightStepSpan2::Serialize(
+void LightStepSpan2::SerializeImpl(
     google::protobuf::io::CodedOutputStream& ostream) {
   // span context
   SerializeKeyLength<ProtoSpan::kSpanContextFieldNumber>(
@@ -296,6 +301,6 @@ void LightStepSpan2::Serialize(
 
 void LightStepSpan2::Serialize(
     void* context, google::protobuf::io::CodedOutputStream& ostream) {
-  static_cast<LightStepSpan2*>(context)->Serialize(ostream);
+  static_cast<LightStepSpan2*>(context)->SerializeImpl(ostream);
 }
 } // namespace lightstep
