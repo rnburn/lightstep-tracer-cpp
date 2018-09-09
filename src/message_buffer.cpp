@@ -34,6 +34,17 @@ static void SerializePacket(const PacketHeader& header,
   message.SerializeWithCachedSizes(&stream);
 }
 
+static void SerializePacket(const PacketHeader& header,
+    MessageBuffer::SerializationFunction serialization_function,
+    void* context,
+    const CircularBufferPlacement& placement) noexcept {
+  BipartMemoryOutputStream stream_buffer{placement.data1, placement.size1,
+                                         placement.data2, placement.size2};
+  google::protobuf::io::CodedOutputStream stream{&stream_buffer};
+  SerializePacketHeader(header, stream);
+  serialization_function(context, stream);
+}
+
 //------------------------------------------------------------------------------
 // constructor
 //------------------------------------------------------------------------------
@@ -47,13 +58,31 @@ bool MessageBuffer::Add(const google::protobuf::Message& message) noexcept {
 
   auto placement = buffer_.Reserve(body_size + PacketHeader::size);
 
-  // Not enough space, so drop the span.
   if (placement.data1 == nullptr) {
+    // Not enough space, so drop the span.
     return false;
   }
 
   PacketHeader header{1, static_cast<uint32_t>(body_size)};
   SerializePacket(header, message, placement);
+
+  // Mark the span as ready to send to the satellite.
+  ready_flags_.Set(static_cast<int>(placement.data1 - buffer_.data()));
+
+  return true;
+}
+
+bool MessageBuffer::Add(SerializationFunction serialization_function,
+                        void* context, size_t body_size) noexcept {
+  auto placement = buffer_.Reserve(body_size + PacketHeader::size);
+
+  if (placement.data1 == nullptr) {
+    // Not enough space, so drop the span.
+    return false;
+  }
+
+  PacketHeader header{1, static_cast<uint32_t>(body_size)};
+  SerializePacket(header, serialization_function, context, placement);
 
   // Mark the span as ready to send to the satellite.
   ready_flags_.Set(static_cast<int>(placement.data1 - buffer_.data()));

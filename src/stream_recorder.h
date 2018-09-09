@@ -18,6 +18,9 @@ class StreamRecorder final : public Recorder {
 
   void RecordSpan(const collector::Span& span) noexcept override;
 
+  void RecordSpan(SerializationFunction serialization_function,
+                          void* context, size_t size) noexcept override;
+
   bool FlushWithTimeout(
       std::chrono::system_clock::duration timeout) noexcept override;
 

@@ -18,7 +18,7 @@ class Recorder {
   virtual void RecordSpan(const collector::Span& span) noexcept = 0;
 
   virtual void RecordSpan(SerializationFunction serialization_function,
-                          void* context, size_t size) {
+                          void* context, size_t size) noexcept {
   }
 
   virtual bool FlushWithTimeout(

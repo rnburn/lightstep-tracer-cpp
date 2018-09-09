@@ -61,6 +61,18 @@ void StreamRecorder::RecordSpan(const collector::Span& span) noexcept {
   }
 }
 
+void StreamRecorder::RecordSpan(SerializationFunction serialization_function,
+                                void* context, size_t size) noexcept {
+  message_buffer_.Add(serialization_function, context, size);
+
+  // notifying the condition variable has a signficant performance cost, so
+  // make an effort to make sure it's worthwhile before doing so.
+  if (waiting_ &&
+      message_buffer_.num_pending_bytes() >= notification_threshold_) {
+    condition_variable_.notify_all();
+  }
+}
+
 //------------------------------------------------------------------------------
 // FlushWithTimeout
 //------------------------------------------------------------------------------
