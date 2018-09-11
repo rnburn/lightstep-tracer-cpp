@@ -3,6 +3,8 @@
 #include "logger.h"
 #include "lightstep_span_context.h"
 #include "recorder.h"
+#include "span_references.h"
+#include "baggage.h"
 
 #include <opentracing/span.h>
 
@@ -111,6 +113,11 @@ class LightStepSpan2 final : public opentracing::Span,
   uint64_t trace_id_;
   uint64_t span_id_;
 
+  Baggage baggage_;
+  bool sampled_{true};
+
+  const SpanReferences* references_{nullptr};
+
   opentracing::string_view operation_name_;
 
   uint64_t start_timestamp_seconds_since_epoch_;
@@ -119,6 +126,7 @@ class LightStepSpan2 final : public opentracing::Span,
   std::chrono::steady_clock::time_point start_steady_timestamp_;
   uint64_t duration_micros_;
 
+  size_t references_serialization_size_;
   size_t span_context_serialization_size_;
   size_t start_timestamp_serialization_size_;
   size_t serialization_size_;

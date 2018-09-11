@@ -109,6 +109,12 @@ LightStepSpan2::LightStepSpan2(
            start_timestamp_nano_fraction_) =
       ProtobufFormatTimestamp(start_system_timestamp);
 
+  // Set any span references.
+  references_ =
+      SetSpanReferences(logger_, arena_, options.references.data(),
+                        options.references.data() + options.references.size(),
+                        baggage_, sampled_);
+
   // Set IDs.
   trace_id_ = GenerateId();
   span_id_ = GenerateId();
