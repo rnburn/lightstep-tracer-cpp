@@ -26,4 +26,6 @@ func TestProduceIntoBuffer(t *testing.T) {
   expected_contents := make([]byte, 3)
   copy(expected_contents, "abc")
   require.Equal(t, expected_contents, contents.Data1)
+  free_space2 := buffer.PeekFree()
+  require.Equal(t, 7, free_space2.Size())
 }
