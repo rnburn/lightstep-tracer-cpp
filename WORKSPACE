@@ -88,3 +88,9 @@ go_repository(
 	importpath = "github.com/miekg/dns",
 	tag = "v1.1.4",
 )
+
+go_repository(
+    name = "com_github_stretchr_testify",
+    importpath = "github.com/stretchr/testify",
+    tag = "v1.3.0",
+)
