@@ -4,17 +4,7 @@ load(
     "lightstep_cc_library",
 )
 
-load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
-
 lightstep_package()
-
-go_binary(
-	name = "mock_satellite",
-	srcs = [
-		"main.go",
-	],
-  out = "mock_satellite",
-)
 
 lightstep_cc_library(
     name = "mock_satellite_lib",
@@ -30,6 +20,6 @@ lightstep_cc_library(
         "//src/network:socket_lib",
     ],
     data = [
-        ":mock_satellite",
+        "//test/mock_satellite/go/cmd/mock_satellite:mock_satellite",
     ],
 )

@@ -26,7 +26,8 @@ static bool IsMockServerUp(uint16_t port) try {
 // constructor
 //--------------------------------------------------------------------------------------------------
 MockSatelliteHandle::MockSatelliteHandle(uint16_t port)
-    : handle_{"test/mock_satellite/mock_satellite", {std::to_string(port)}} {
+    /* : handle_{"test/mock_satellite/mock_satellite", {std::to_string(port)}} { */
+    : handle_{"test/mock_satellite/go/cmd/mock_satellite/mock_satellite", {std::to_string(port)}} {
   if (!IsEventuallyTrue([port] { return IsMockServerUp(port); })) {
     std::cerr << "Failed to connect to mock satellite\n";
     std::terminate();
