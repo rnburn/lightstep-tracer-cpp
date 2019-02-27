@@ -80,7 +80,7 @@ func (dispatch *requestDispatch) parseHeaders(reader *zerocopy.Reader) error {
   }
 }
 
-func parseRequestDispatch(reader *zerocopy.Reader) error {
+func parseRequestDispatch(reader *zerocopy.Reader) (*requestDispatch, error) {
   dispatch := &requestDispatch{
     contentLength: -1,
     isChunked: false,
@@ -88,7 +88,8 @@ func parseRequestDispatch(reader *zerocopy.Reader) error {
   }
   err := dispatch.parseRequestLine(reader)
   if err != nil {
-    return err
+    return nil, err
   }
-  return dispatch.parseHeaders(reader)
+  err = dispatch.parseHeaders(reader)
+  return dispatch, err
 }

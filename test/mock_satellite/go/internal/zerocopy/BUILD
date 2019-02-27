@@ -26,4 +26,3 @@ go_test(
     importpath = "github.com/lightstep/lightstep-tracer-cpp/test/mock_satellite/go/internal/zerocopy",
     embed = [":go_default_library"],
 )
-

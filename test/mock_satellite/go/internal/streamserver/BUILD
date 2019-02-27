@@ -18,3 +18,15 @@ go_library(
         "//test/mock_satellite/go/internal/zerocopy:go_default_library",
     ],
 )
+
+go_test(
+    name = "go_default_test",
+    srcs = [
+        "request_dispatch_test.go",
+    ],
+    deps = [
+        "@com_github_stretchr_testify//require:go_default_library",
+    ],
+    importpath = "github.com/lightstep/lightstep-tracer-cpp/test/mock_satellite/go/internal/streamserver",
+    embed = [":go_default_library"],
+)

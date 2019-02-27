@@ -13,15 +13,11 @@ func TestRead(t *testing.T) {
   reader := NewReader(buffer, source)
   require.Equal(t, 0, len(reader.Bytes()))
 
-  expected_contents := make([]byte, 3)
-  copy(expected_contents, "abc")
   require.Nil(t, reader.Read())
-  require.Equal(t, expected_contents, reader.Bytes()) 
+  require.Equal(t, []byte("abc"), reader.Bytes()) 
 
-  expected_contents = make([]byte, 6)
-  copy(expected_contents, "abc123")
   require.Nil(t, reader.Read())
-  require.Equal(t, expected_contents, reader.Bytes()) 
+  require.Equal(t, []byte("abc123"), reader.Bytes()) 
 }
 
 func TestOverflow(t *testing.T) {
