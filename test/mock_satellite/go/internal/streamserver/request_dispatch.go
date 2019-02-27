@@ -5,7 +5,7 @@ import (
   "bytes"
   "errors"
   "strconv"
-  "github.com/lightstep/lightstep-tracer-cpp/test/mock_satellite/go/internal/zerocopyreader"
+  "github.com/lightstep/lightstep-tracer-cpp/test/mock_satellite/go/internal/zerocopy"
 )
 
 const (
@@ -20,7 +20,7 @@ type requestDispatch struct {
   numBytesRead int
 }
 
-func (dispatch *requestDispatch) readUntil(reader *zerocopyreader.Reader, delimiter []byte) ([]byte, error) {
+func (dispatch *requestDispatch) readUntil(reader *zerocopy.Reader, delimiter []byte) ([]byte, error) {
   for {
     data := reader.Bytes()[dispatch.numBytesRead:]
     index := bytes.Index(data, delimiter)
@@ -36,7 +36,7 @@ func (dispatch *requestDispatch) readUntil(reader *zerocopyreader.Reader, delimi
   }
 }
 
-func (dispatch *requestDispatch) parseRequestLine(reader *zerocopyreader.Reader) error {
+func (dispatch *requestDispatch) parseRequestLine(reader *zerocopy.Reader) error {
   var err error
   dispatch.method, err = dispatch.readUntil(reader, []byte(" "))
   if err != nil {
@@ -50,7 +50,7 @@ func (dispatch *requestDispatch) parseRequestLine(reader *zerocopyreader.Reader)
   return err
 }
 
-func (dispatch *requestDispatch) parseHeaders(reader *zerocopyreader.Reader) error {
+func (dispatch *requestDispatch) parseHeaders(reader *zerocopy.Reader) error {
   for {
     headerLine, err := dispatch.readUntil(reader, []byte(httpEndOfLine))
     if err != nil {
@@ -80,7 +80,7 @@ func (dispatch *requestDispatch) parseHeaders(reader *zerocopyreader.Reader) err
   }
 }
 
-func parseRequestDispatch(reader *zerocopyreader.Reader) error {
+func parseRequestDispatch(reader *zerocopy.Reader) error {
   dispatch := &requestDispatch{
     contentLength: -1,
     isChunked: false,

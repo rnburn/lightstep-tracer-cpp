@@ -12,7 +12,7 @@ go_library(
     srcs = [
         "reader.go",
     ],
-    importpath = "github.com/lightstep/lightstep-tracer-cpp/test/mock_satellite/go/internal/zerocopyreader",
+    importpath = "github.com/lightstep/lightstep-tracer-cpp/test/mock_satellite/go/internal/zerocopy",
 )
 
 go_test(
@@ -23,7 +23,7 @@ go_test(
     deps = [
         "@com_github_stretchr_testify//require:go_default_library",
     ],
-    importpath = "github.com/lightstep/lightstep-tracer-cpp/test/mock_satellite/go/internal/zerocopyreader",
+    importpath = "github.com/lightstep/lightstep-tracer-cpp/test/mock_satellite/go/internal/zerocopy",
     embed = [":go_default_library"],
 )
 

@@ -1,4 +1,4 @@
-package zerocopyreader
+package zerocopy
 
 import (
   "testing"
