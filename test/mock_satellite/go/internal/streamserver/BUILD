@@ -11,6 +11,10 @@ go_library(
     name = "go_default_library",
     srcs = [
         "server.go",
+        "request_dispatch.go"
     ],
     importpath = "github.com/lightstep/lightstep-tracer-cpp/test/mock_satellite/go/internal/streamserver",
+    deps = [
+        "//test/mock_satellite/go/internal/zerocopyreader:go_default_library",
+    ],
 )

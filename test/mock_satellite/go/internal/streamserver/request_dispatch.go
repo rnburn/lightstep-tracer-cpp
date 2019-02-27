@@ -9,8 +9,6 @@ import (
 )
 
 const (
-  parsingRequestLine = 0
-  parsingHeader = 1
   httpEndOfLine = "\r\n"
 )
 
@@ -22,15 +20,7 @@ type requestDispatch struct {
   numBytesRead int
 }
 
-func newRequestDispatch() *requestDispatch {
-  return &requestDispatch{
-    contentLength: 0,
-    isChunked: false,
-    numBytesRead: 0,
-  }
-}
-
-func (dispatch *requestDispatch) readUntil(reader *zerocopyreader.Reader, delimiter []byte) []byte, error {
+func (dispatch *requestDispatch) readUntil(reader *zerocopyreader.Reader, delimiter []byte) ([]byte, error) {
   for {
     data := reader.Bytes()[dispatch.numBytesRead:]
     index := bytes.Index(data, delimiter)
@@ -39,19 +29,20 @@ func (dispatch *requestDispatch) readUntil(reader *zerocopyreader.Reader, delimi
       dispatch.numBytesRead += index + len(delimiter)
       return result, nil
     }
-    _, err := reader.Read()
+    err := reader.Read()
     if err != nil {
-      return 0, err
+      return nil, err
     }
   }
 }
 
-func (dispatch *requestDispatch) readRequestLine(reader *zerocopyreader.Reader) error {
-  dispatch.method, err := dispatch.readUntil(reader, []byte(" "))
+func (dispatch *requestDispatch) parseRequestLine(reader *zerocopyreader.Reader) error {
+  var err error
+  dispatch.method, err = dispatch.readUntil(reader, []byte(" "))
   if err != nil {
     return err
   }
-  dispatch.uri, err := dispatch.readUntil(reader, []byte(" "))
+  dispatch.uri, err = dispatch.readUntil(reader, []byte(" "))
   if err != nil {
     return err
   }
@@ -59,7 +50,7 @@ func (dispatch *requestDispatch) readRequestLine(reader *zerocopyreader.Reader) 
   return err
 }
 
-func (dispatch *requestDispatch) readHeaders(reader *zerocopyreader.Reader) error {
+func (dispatch *requestDispatch) parseHeaders(reader *zerocopyreader.Reader) error {
   for {
     headerLine, err := dispatch.readUntil(reader, []byte(httpEndOfLine))
     if err != nil {
@@ -70,7 +61,7 @@ func (dispatch *requestDispatch) readHeaders(reader *zerocopyreader.Reader) erro
     }
     keyIndex := bytes.Index(headerLine, []byte(":"))
     if keyIndex == -1 {
-      return errors.New(fmt.Printf("Invalid header line: %s\n", headerLine))
+      return errors.New(fmt.Sprintf("Invalid header line: %s\n", headerLine))
     }
     key := headerLine[:keyIndex]
     value := headerLine[keyIndex+1:]
@@ -78,19 +69,26 @@ func (dispatch *requestDispatch) readHeaders(reader *zerocopyreader.Reader) erro
       dispatch.isChunked = bytes.Equal(value, []byte("chunked"))
     }
     if bytes.EqualFold(key, []byte("Content-Length")) {
-      dispatch.contentLength, err := strconv.Atoi(value)
+      dispatch.contentLength, err = strconv.Atoi(string(value))
       if err != nil {
-        return errors.New(fmt.Printf("Invalid Content-Length header: %s\n", err.Error()))
+        return errors.New(fmt.Sprintf("Invalid Content-Length header: %s\n", err.Error()))
+      }
+      if dispatch.contentLength < 0 {
+        return errors.New(fmt.Sprintf("Invalid Content-Length header: %s\n", string(value)))
       }
     }
   }
 }
 
-func readRequestDispatch(reader *zerocopyreader.Reader) error {
-  dispatch := newRequestDispatch()
-  err := dispatch.readRequestLine(reader)
+func parseRequestDispatch(reader *zerocopyreader.Reader) error {
+  dispatch := &requestDispatch{
+    contentLength: -1,
+    isChunked: false,
+    numBytesRead: 0,
+  }
+  err := dispatch.parseRequestLine(reader)
   if err != nil {
     return err
   }
-  return dispatch.readHeaders(reader)
+  return dispatch.parseHeaders(reader)
 }
