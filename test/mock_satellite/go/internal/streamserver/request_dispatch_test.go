@@ -55,4 +55,16 @@ func TestParseTransferEncodingHeader(t *testing.T) {
   dispatch, err := parseRequestDispatch(reader)
   require.Nil(t, err)
   require.True(t, dispatch.isChunked)
+
+  reader = newZeroCopyReader("GET /abc HTTP/1.1\r\ntransFer-enCoDing: \tchunked \t\t\r\n\r\n")
+  dispatch, err = parseRequestDispatch(reader)
+  require.Nil(t, err)
+  require.True(t, dispatch.isChunked)
+}
+
+func TestParseContentLength(t *testing.T) {
+  reader := newZeroCopyReader("GET /abc HTTP/1.1\r\nContent-Length:123\r\n\r\n")
+  dispatch, err := parseRequestDispatch(reader)
+  require.Nil(t, err)
+  require.Equal(t, dispatch.contentLength, 123)
 }

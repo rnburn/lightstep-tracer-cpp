@@ -64,7 +64,7 @@ func (dispatch *requestDispatch) parseHeaders(reader *zerocopy.Reader) error {
       return errors.New(fmt.Sprintf("Invalid header line: %s\n", headerLine))
     }
     key := headerLine[:keyIndex]
-    value := headerLine[keyIndex+1:]
+    value := bytes.TrimSpace(headerLine[keyIndex+1:])
     if bytes.EqualFold(key, []byte("Transfer-Encoding")) {
       dispatch.isChunked = bytes.Equal(value, []byte("chunked"))
     }
