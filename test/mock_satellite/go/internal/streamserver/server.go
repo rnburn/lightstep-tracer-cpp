@@ -2,11 +2,18 @@ package streamserver
 
 import (
   "errors"
+  "bytes"
   "log"
   "io"
 	"net"
   "sync"
   "sync/atomic"
+  "github.com/lightstep/lightstep-tracer-cpp/test/mock_satellite/go/internal/zerocopy"
+  "github.com/lightstep/lightstep-tracer-cpp/test/mock_satellite/go/internal/ringbuf"
+)
+
+const (
+  BufferSize = 1024*1024
 )
 
 type Server struct {
@@ -56,18 +63,39 @@ func (server *Server) handleConnection(connection net.Conn) {
   server.connections[connection] = true
   server.mutex.Unlock()
 
-	defer connection.Close()
-	buffer := make([]byte, 512)
-	var err error
-	for {
-		_, err = connection.Read(buffer)
-		if err != nil {
-			break
-		}
-	}
-	if err != io.EOF {
-		log.Fatalf("Read failed: %s\n", err.Error())
-	}
+  defer func() {
+    connection.Close()
+    server.mutex.Lock()
+    defer server.mutex.Unlock()
+    // Do I need this?
+    if server.connections == nil {
+      return
+    }
+    delete(server.connections, connection) 
+  }();
+
+  server.dispatchRequest(connection)
+}
+
+func (server *Server) dispatchRequest(connection net.Conn) {
+	buffer := ringbuf.NewBuffer(BufferSize)
+  reader := zerocopy.NewReader(buffer.PeekFree().Data1, connection) 
+  dispatch, err := parseRequestDispatch(reader)
+  if err != nil {
+    log.Fatalf("Failed to dispatch request: %s\n", err.Error())
+  }
+  if dispatch.contentLength >= 0 {
+    server.handleFixedLengthRequest(io.MultiReader(bytes.NewBuffer(reader.Bytes()), connection))
+    return
+  }
+}
+
+func (server *Server) handleFixedLengthRequest(reader io.Reader) {
+  // request, err := http.ReadRequest(bufio.NewReader(reader))
+  // if err != nil {
+  //   log.Fatalf("Failed tp process fixed length request: %s\n", err.Error())
+  // }
+
 }
 
 func (server *Server) Stop() {
