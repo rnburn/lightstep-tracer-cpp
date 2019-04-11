@@ -1,7 +1,7 @@
 #pragma once
 
-#include <memory>
 #include <array>
+#include <memory>
 
 #include "common/noncopyable.h"
 
@@ -29,16 +29,17 @@ class SerializationChain final
   google::protobuf::int64 ByteCount() const override {
     return static_cast<google::protobuf::int64>(num_bytes_written_);
   }
+
  private:
-   int num_blocks_{0};
-   int first_;
-   int num_bytes_written_{0};
-   int current_block_position_{0};
-   Block* current_block_;
+  int num_blocks_{0};
+  int first_;
+  int num_bytes_written_{0};
+  int current_block_position_{0};
+  Block* current_block_;
 
-   int fragment_index_{0};
-   int fragment_position_{0};
+  int fragment_index_{0};
+  int fragment_position_{0};
 
-   Block head_;
+  Block head_;
 };
-} // namespace lightstep
+}  // namespace lightstep

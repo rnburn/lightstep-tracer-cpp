@@ -4,8 +4,7 @@ namespace lightstep {
 //--------------------------------------------------------------------------------------------------
 // AddChunkFraming
 //--------------------------------------------------------------------------------------------------
-void SerializationChain::AddChunkFraming() {
-}
+void SerializationChain::AddChunkFraming() {}
 
 //--------------------------------------------------------------------------------------------------
 // Next
@@ -32,8 +31,8 @@ bool SerializationChain::Next(void** data, int* size) {
 //--------------------------------------------------------------------------------------------------
 // BackUp
 //--------------------------------------------------------------------------------------------------
-void SerializationChain::BackUp(int count) { 
-  num_bytes_written_ -= count; 
+void SerializationChain::BackUp(int count) {
+  num_bytes_written_ -= count;
   current_block_position_ -= count;
 }
-} // namespace lightstep
+}  // namespace lightstep

@@ -51,6 +51,30 @@ lightstep_catch_test(
 )
 
 lightstep_catch_test(
+    name = "fragment_input_stream_test",
+    srcs = [
+        "fragment_input_stream_test.cpp",
+    ],
+    deps = [
+        "//src/common:fragment_array_input_stream_lib",
+        "//test:utility_lib",
+    ],
+)
+
+lightstep_catch_test(
+    name = "fragment_array_input_stream_test",
+    srcs = [
+        "fragment_array_input_stream_test.cpp",
+    ],
+    deps = [
+        "//src/common:fragment_array_input_stream_lib",
+        "//test:utility_lib",
+    ],
+)
+
+
+
+lightstep_catch_test(
     name = "function_ref_test",
     srcs = [
         "function_ref_test.cpp",

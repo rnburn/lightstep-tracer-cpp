@@ -33,7 +33,7 @@ lightstep_cc_library(
     ],
     deps = [
         "//src/common:chunk_circular_buffer_lib",
-        "//src/network:fragment_array_input_stream_lib",
+        "//src/common:fragment_array_input_stream_lib",
         ":utility_lib",
         ":fragment_span_input_stream_lib",
     ],
@@ -49,7 +49,7 @@ lightstep_cc_library(
     ],
     deps = [
         "//src/common:circular_buffer_lib",
-        "//src/network:fragment_array_input_stream_lib",
+        "//src/common:fragment_array_input_stream_lib",
         ":utility_lib",
     ],
 )
@@ -65,8 +65,8 @@ lightstep_cc_library(
     deps = [
         "//src/common:function_ref_lib",
         "//src/common:utility_lib",
-        "//src/network:fragment_input_stream_lib",
-        "//src/network:fragment_array_input_stream_lib",
+        "//src/common:fragment_input_stream_lib",
+        "//src/common:fragment_array_input_stream_lib",
         ":embedded_metrics_message_lib",
         ":span_stream_lib",
         ":stream_recorder_metrics_lib",
@@ -175,7 +175,7 @@ lightstep_cc_library(
         "//src/common:protobuf_lib",
         "//src/common:utility_lib",
         "//src/common:circular_buffer_lib",
-        "//src/network:fragment_array_input_stream_lib",
+        "//src/common:fragment_array_input_stream_lib",
     ],
 )
 
