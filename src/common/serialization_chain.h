@@ -3,13 +3,16 @@
 #include <array>
 #include <memory>
 
+#include "common/fragment_input_stream.h"
 #include "common/noncopyable.h"
+#include "common/utility.h"
 
 #include <google/protobuf/io/zero_copy_stream.h>
 
 namespace lightstep {
 class SerializationChain final
     : public google::protobuf::io::ZeroCopyOutputStream,
+      public FragmentInputStream,
       private Noncopyable {
   static const int BlockSize = 1024;
 
@@ -19,6 +22,8 @@ class SerializationChain final
   };
 
  public:
+  SerializationChain() noexcept;
+
   void AddChunkFraming();
 
   // ZeroCopyOutputStream
@@ -30,16 +35,27 @@ class SerializationChain final
     return static_cast<google::protobuf::int64>(num_bytes_written_);
   }
 
+  // FragmentInputStream
+  int num_fragments() const noexcept override;
+
+  bool ForEachFragment(Callback callback) const noexcept override;
+
+  void Clear() noexcept override;
+
+  void Seek(int fragment_index, int position) noexcept override;
+
  private:
   int num_blocks_{0};
-  int first_;
   int num_bytes_written_{0};
+  int num_fragment_body_bytes_{0};
   int current_block_position_{0};
+  int chunk_header_size_{0};
   Block* current_block_;
 
   int fragment_index_{0};
   int fragment_position_{0};
 
+  std::array<char, Num64BitHexDigits + 2> chunk_header_;
   Block head_;
 };
 }  // namespace lightstep

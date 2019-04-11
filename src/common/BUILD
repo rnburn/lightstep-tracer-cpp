@@ -64,7 +64,9 @@ lightstep_cc_library(
         "serialization_chain.cpp",
     ],
     deps = [
+        ":fragment_input_stream_lib",
         ":noncopyable_lib",
+        ":utility_lib",
     ],
     external_deps = [
         "@com_google_protobuf//:protobuf",

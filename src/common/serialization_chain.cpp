@@ -1,10 +1,28 @@
 #include "common/serialization_chain.h"
 
 namespace lightstep {
+static const char* LineTerminator = "\r\n";
+
+//--------------------------------------------------------------------------------------------------
+// constructor
+//--------------------------------------------------------------------------------------------------
+SerializationChain::SerializationChain() noexcept 
+  : current_block_{&head_}
+{}
+
 //--------------------------------------------------------------------------------------------------
 // AddChunkFraming
 //--------------------------------------------------------------------------------------------------
-void SerializationChain::AddChunkFraming() {}
+void SerializationChain::AddChunkFraming() {
+  auto chunk_header_size_ =
+      std::snprintf(chunk_header_.data(), chunk_header_.size(), "%llX\r\n",
+                    static_cast<unsigned long long>(num_bytes_written_));
+  assert(chunk_header_size_ > 0);
+
+  // Prepare the data structure to act as a FragmentInputStream.
+  current_block_ = &head_;
+  num_fragment_body_bytes_ = num_bytes_written_;
+}
 
 //--------------------------------------------------------------------------------------------------
 // Next
@@ -34,5 +52,86 @@ bool SerializationChain::Next(void** data, int* size) {
 void SerializationChain::BackUp(int count) {
   num_bytes_written_ -= count;
   current_block_position_ -= count;
+}
+
+//--------------------------------------------------------------------------------------------------
+// num_fragments
+//--------------------------------------------------------------------------------------------------
+int SerializationChain::num_fragments() const noexcept {
+  if (num_blocks_ == 0) {
+    return 0;
+  }
+  return num_blocks_ + 2;
+}
+
+//--------------------------------------------------------------------------------------------------
+// ForEachFragment
+//--------------------------------------------------------------------------------------------------
+bool SerializationChain::ForEachFragment(Callback callback) const noexcept {
+  assert(fragment_index_ >= 0 && fragment_index_ <= num_blocks_ + 1);
+
+  if (num_blocks_ == 0) {
+    return true;
+  }
+
+  // chunk header
+  if (fragment_index_ == 0) {
+    assert(fragment_position_ < chunk_header_size_);
+    if (!callback(static_cast<void*>(const_cast<char*>(chunk_header_.data()) +
+                                     fragment_position_),
+                  chunk_header_size_ - fragment_position_)) {
+      return false;
+    }
+  }
+
+  // data
+  auto block = current_block_;
+  auto remaining_body_bytes = num_fragment_body_bytes_;
+  if (fragment_index_ > 0 && fragment_index_ <= num_blocks_) {
+    auto block_size = std::min(BlockSize, remaining_body_bytes);
+    assert(block_size >= fragment_position_);
+    remaining_body_bytes -= block_size;
+    if (!callback(static_cast<void*>(const_cast<char*>(block->data.data()) + fragment_position_),
+          block_size - fragment_position_)) {
+      return false;
+    }
+    block = block->next.get();
+  }
+  while (block != nullptr) {
+    auto block_size = std::min(BlockSize, remaining_body_bytes);
+    if (!callback(static_cast<void*>(const_cast<char*>(block->data.data())), block_size)) {
+      return false;
+    }
+    remaining_body_bytes -= block_size;
+    block = block->next.get();
+  }
+
+  // chunk trailer
+  if (fragment_index_ == num_blocks_ + 1) {
+    assert(fragment_position_ < 2);
+    return callback(static_cast<void*>(const_cast<char*>(LineTerminator) +
+                                fragment_position_),
+             2 - fragment_position_);
+  }
+  return callback(static_cast<void*>(const_cast<char*>(LineTerminator)), 2);
+}
+
+//--------------------------------------------------------------------------------------------------
+// Clear
+//--------------------------------------------------------------------------------------------------
+void SerializationChain::Clear() noexcept {
+  num_blocks_ = 0;
+  fragment_index_ = 0;
+  fragment_position_ = 0;
+  num_fragment_body_bytes_ = 0;
+  current_block_ = nullptr;
+}
+
+//--------------------------------------------------------------------------------------------------
+// Seek
+//--------------------------------------------------------------------------------------------------
+void SerializationChain::Seek(int fragment_index, int position) noexcept {
+  (void)fragment_index;
+  (void)position;
 }
 }  // namespace lightstep
