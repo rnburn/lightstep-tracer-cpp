@@ -121,3 +121,13 @@ lightstep_catch_test(
       "//src/common:random_traverser_lib",
     ],
 )
+
+lightstep_catch_test(
+    name = "serialization_chain_test",
+    srcs = [
+        "serialization_chain_test.cpp",
+    ],
+    deps = [
+        "//src/common:serialization_chain_lib",
+    ],
+)
