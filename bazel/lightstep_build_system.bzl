@@ -73,7 +73,7 @@ def lightstep_cc_library(name,
       copts = lightstep_include_copts() + lightstep_copts(is_3rd_party) + copts,
       linkopts = linkopts,
       includes = includes,
-      deps = external_deps + deps,
+      deps = deps + external_deps,
       data = data,
       linkstatic = 1,
       include_prefix = lightstep_include_prefix(native.package_name()),
@@ -86,7 +86,9 @@ def lightstep_cc_binary(
         args = [],
         srcs = [],
         data = [],
+        copts = [],
         testonly = 0,
+        linkshared = False,
         visibility = None,
         external_deps = [],
         deps = [],
@@ -96,13 +98,14 @@ def lightstep_cc_binary(
         args = args,
         srcs = srcs,
         data = data,
-        copts = lightstep_include_copts() + lightstep_copts(),
+        copts = lightstep_include_copts() + lightstep_copts() + copts,
         linkopts = linkopts,
+        linkshared = linkshared,
         testonly = testonly,
         linkstatic = 1,
         visibility = visibility,
         stamp = 1,
-        deps = external_deps + deps,
+        deps = deps + external_deps
     )
 
 def lightstep_cc_test(
@@ -126,7 +129,7 @@ def lightstep_cc_test(
         linkstatic = 1,
         visibility = visibility,
         stamp = 1,
-        deps = external_deps + deps,
+        deps = deps + external_deps
     )
 
 def lightstep_catch_test(

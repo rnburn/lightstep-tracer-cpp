@@ -29,12 +29,10 @@ static std::vector<std::pair<std::string, uint16_t>> GetSatelliteEndpoints(
 }
 
 //--------------------------------------------------------------------------------------------------
-// MakeTracer
+// MakeTracerOptions
 //--------------------------------------------------------------------------------------------------
-opentracing::expected<std::shared_ptr<opentracing::Tracer>>
-LightStepTracerFactory::MakeTracer(const char* configuration,
-                                   std::string& error_message) const
-    noexcept try {
+static opentracing::expected<LightStepTracerOptions> MakeTracerOptions(
+    const char* configuration, std::string& error_message) {
   tracer_configuration::TracerConfiguration tracer_configuration;
   auto parse_result = google::protobuf::util::JsonStringToMessage(
       configuration, &tracer_configuration);
@@ -74,8 +72,22 @@ LightStepTracerFactory::MakeTracer(const char* configuration,
 
   options.satellite_endpoints = GetSatelliteEndpoints(tracer_configuration);
 
+  return options;
+}
+
+//--------------------------------------------------------------------------------------------------
+// MakeTracer
+//--------------------------------------------------------------------------------------------------
+opentracing::expected<std::shared_ptr<opentracing::Tracer>>
+LightStepTracerFactory::MakeTracer(const char* configuration,
+                                   std::string& error_message) const
+    noexcept try {
+  auto options_maybe = MakeTracerOptions(configuration, error_message);
+  if (!options_maybe) {
+    return opentracing::make_unexpected(options_maybe.error());
+  }
   auto result = std::shared_ptr<opentracing::Tracer>{
-      MakeLightStepTracer(std::move(options))};
+      MakeLightStepTracer(std::move(*options_maybe))};
   if (result == nullptr) {
     return opentracing::make_unexpected(
         opentracing::invalid_configuration_error);
@@ -84,5 +96,22 @@ LightStepTracerFactory::MakeTracer(const char* configuration,
 } catch (const std::bad_alloc&) {
   return opentracing::make_unexpected(
       std::make_error_code(std::errc::not_enough_memory));
+}
+
+//--------------------------------------------------------------------------------------------------
+// MakeLightStepTracer
+//--------------------------------------------------------------------------------------------------
+std::shared_ptr<LightStepTracer> MakeLightStepTracer(
+    const char* configuration) {
+  std::string error_message;
+  auto options_maybe = MakeTracerOptions(configuration, error_message);
+  if (!options_maybe) {
+    throw std::runtime_error{std::move(error_message)};
+  }
+  auto result = MakeLightStepTracer(std::move(*options_maybe));
+  if (result == nullptr) {
+    throw std::runtime_error{"failed to construct tracer"};
+  }
+  return result;
 }
 }  // namespace lightstep

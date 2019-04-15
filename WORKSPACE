@@ -3,10 +3,18 @@ workspace(name = "com_lightstep_tracer_cpp")
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
+all_content = """filegroup(name = "all", srcs = glob(["**"]), visibility = ["//visibility:public"])"""
+
 git_repository(
     name = "io_opentracing_cpp",
     remote = "https://github.com/opentracing/opentracing-cpp",
     commit = "ac50154a7713877f877981c33c3375003b6ebfe1",
+)
+
+git_repository(
+    name = "com_google_protobuf",
+    remote = "https://github.com/protocolbuffers/protobuf.git",
+    commit = "8e5ea65953f3c47e01bca360ecf3abdf2c8b1c33",
 )
 
 git_repository(
@@ -44,7 +52,7 @@ git_repository(
 git_repository(
     name = "com_github_grpc_grpc",
     remote = "https://github.com/grpc/grpc",
-    commit = "e97c9457e2f4e6733873ea2975d3b90432fdfdc1",
+    commit = "d418c42f1ef2f433df54aaee42c75f8d58742927",
 )
 
 load("@build_stack_rules_proto//cpp:deps.bzl", "cpp_grpc_compile")
@@ -54,6 +62,58 @@ cpp_grpc_compile()
 load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
 
 grpc_deps()
+
+#######################################
+# Python bridge
+#######################################
+
+http_archive(
+   name = "rules_foreign_cc",
+   strip_prefix = "rules_foreign_cc-master",
+   url = "https://github.com/bazelbuild/rules_foreign_cc/archive/master.zip",
+)
+
+load("@rules_foreign_cc//:workspace_definitions.bzl", "rules_foreign_cc_dependencies")
+
+rules_foreign_cc_dependencies([
+])
+
+http_archive(
+    name = "com_github_openssl_openssl",
+    build_file_content = all_content,
+    strip_prefix = "openssl-OpenSSL_1_1_1",
+    urls = [
+        "https://github.com/openssl/openssl/archive/OpenSSL_1_1_1.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "com_github_python_cpython",
+    build_file_content = all_content,
+    strip_prefix = "cpython-3.7.3",
+    urls = [
+        "https://github.com/python/cpython/archive/v3.7.3.tar.gz",
+    ],
+)
+
+git_repository(
+    name = "io_bazel_rules_python",
+    remote = "https://github.com/bazelbuild/rules_python.git",
+    commit = "965d4b4a63e6462204ae671d7c3f02b25da37941",
+)
+
+
+# Only needed for PIP support:
+load("@io_bazel_rules_python//python:pip.bzl", "pip_repositories")
+
+pip_repositories()
+
+git_repository(
+    name = "com_github_rnburn_python_cpp_bridge",
+    remote = "https://github.com/rnburn/python-cpp-bridge.git",
+    commit = "42a2e48f1ad3de35244cd13937ff437b55cda476",
+)
+
 
 #######################################
 # Testing dependencies
@@ -95,4 +155,3 @@ go_repository(
     importpath = "github.com/golang/protobuf",
     tag = "v1.3.0",
 )
-
