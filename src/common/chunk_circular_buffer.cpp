@@ -43,6 +43,7 @@ bool ChunkCircularBuffer::Add(Serializer serializer, size_t size) noexcept {
   auto prev_ready_state =
       ready_flags_.Set(static_cast<int>(placement.data1 - buffer_.data()));
   assert(!prev_ready_state);
+  (void)prev_ready_state;
   return true;
 }
 
@@ -64,6 +65,7 @@ void ChunkCircularBuffer::Allot() noexcept {
     size_t chunk_size;
     auto was_successful = ReadChunkHeader(stream, chunk_size);
     assert(was_successful);
+    (void)was_successful;
     num_bytes_allotted_ += stream.ByteCount() + chunk_size + 2;
     assert(stream.Skip(static_cast<int>(chunk_size + 2)));
   }
@@ -95,6 +97,7 @@ CircularBufferConstPlacement ChunkCircularBuffer::FindChunk(
     size_t chunk_size;
     auto was_successful = ReadChunkHeader(stream, chunk_size);
     assert(was_successful);
+    (void)was_successful;
     auto total_size = stream.ByteCount() + chunk_size + 2;
     if (index < position + total_size) {
       return buffer_.Peek(position, total_size);

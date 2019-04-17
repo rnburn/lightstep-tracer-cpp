@@ -55,6 +55,7 @@ SatelliteEndpointManager::RequestEndpoint() noexcept {
     // RequestEndpoint shouldn't be called until at least one host name is
     // resolved.
     assert(endpoint_index_ != endpoint_index_start + endpoints_.size());
+    (void)endpoint_index_start;
 
     int host_index;
     uint16_t port;

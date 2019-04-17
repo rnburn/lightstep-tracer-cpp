@@ -108,6 +108,16 @@ load("@io_bazel_rules_python//python:pip.bzl", "pip_repositories")
 
 pip_repositories()
 
+load("@io_bazel_rules_python//python:pip.bzl", "pip_import")
+
+pip_import(
+    name = "python_bridge_example_deps",
+    requirements = "//bridge/python/example:requirements.txt",
+)
+
+load("@python_bridge_example_deps//:requirements.bzl", "pip_install")
+pip_install()
+
 git_repository(
     name = "com_github_rnburn_python_cpp_bridge",
     remote = "https://github.com/rnburn/python-cpp-bridge.git",
