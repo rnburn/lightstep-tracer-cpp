@@ -8,6 +8,9 @@ py_binary(
     srcs_version = "PY3ONLY",
     default_python_version = "PY3",
     python_version = "PY3",
+    data = [
+        "//bridge/python:lightstepcpp.so",
+    ],
     deps = [
       requirement("opentracing"),
       requirement("basictracer"),

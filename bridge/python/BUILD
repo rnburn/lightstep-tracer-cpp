@@ -7,13 +7,13 @@ load(
 lightstep_package()
 
 lightstep_cc_binary(
-    name = "lightstep.so",
+    name = "lightstepcpp.so",
     linkshared = True,
     srcs = [
         "src/module.cpp",
     ],
     copts = [
-        "-DPYTHON_BRIDGE_TRACER_MODULE=\"lightstep\"",
+        "-DPYTHON_BRIDGE_TRACER_MODULE=\"lightstepcpp\"",
         "-Wno-missing-field-initializers",
     ],
     linkopts = [

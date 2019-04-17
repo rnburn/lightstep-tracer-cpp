@@ -26,7 +26,7 @@ static PyObject* MakeTracer(PyObject* /*self*/, PyObject* args, PyObject* keywor
 // ModuleMethods
 //--------------------------------------------------------------------------------------------------
 static PyMethodDef ModuleMethods[] = {
-    {"Tracer", reinterpret_cast<PyCFunction>(MakeTracer),
+    {"make_tracer", reinterpret_cast<PyCFunction>(MakeTracer),
      METH_VARARGS | METH_KEYWORDS, PyDoc_STR("Constructs a lightstep tracer")},
     {nullptr, nullptr}};
 
@@ -39,10 +39,10 @@ static PyModuleDef ModuleDefinition = {PyModuleDef_HEAD_INIT, "lightstep",
 } // namespace lightstep
 
 //--------------------------------------------------------------------------------------------------
-// PyInit_lightstep
+// PyInit_lightstepcpp
 //--------------------------------------------------------------------------------------------------
 extern "C" {
-PyMODINIT_FUNC PyInit_lightstep() noexcept {
+PyMODINIT_FUNC PyInit_lightstepcpp() noexcept {
   using namespace lightstep;
   auto module = PyModule_Create(&ModuleDefinition);
   if (module == nullptr) {
