@@ -119,6 +119,7 @@ lightstep_cc_library(
     deps = [
         "//lightstep-tracer-configuration:tracer_configuration_proto_cc",
         "//include/lightstep:tracer_interface",
+        ":tracer_lib",
     ],
     external_deps = [
         "@com_google_protobuf//:protobuf",
