@@ -21,6 +21,10 @@ lightstep_cc_binary(
         "//:tracer_lib",
         ":tracer_upload_bench_proto_cc",
     ],
+    linkopts = [
+        "-static-libstdc++",
+        "-static-libgcc",
+    ],
 )
 
 cc_proto_library(

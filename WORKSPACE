@@ -3,6 +3,10 @@ workspace(name = "com_lightstep_tracer_cpp")
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
+load("//bazel:cc_configure.bzl", "cc_configure")
+
+cc_configure()
+
 all_content = """filegroup(name = "all", srcs = glob(["**"]), visibility = ["//visibility:public"])"""
 
 git_repository(
