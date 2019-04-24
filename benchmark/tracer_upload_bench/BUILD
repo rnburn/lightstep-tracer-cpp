@@ -17,13 +17,14 @@ proto_library(
 lightstep_cc_binary(
     name = "tracer-upload-bench",
     srcs = glob(["*.h", "*.cpp"]),
-    deps = [
-        "//:tracer_lib",
-        ":tracer_upload_bench_proto_cc",
-    ],
     linkopts = [
         "-static-libstdc++",
         "-static-libgcc",
+    ],
+    deps = [
+        "//:tracer_lib",
+        "//test/recorder:in_memory_recorder_lib",
+        ":tracer_upload_bench_proto_cc",
     ],
 )
 

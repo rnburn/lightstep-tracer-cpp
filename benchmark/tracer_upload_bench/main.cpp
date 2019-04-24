@@ -1,8 +1,10 @@
 #include "lightstep/tracer.h"
 
 #include <iostream>
+#include <chrono>
 
 #include "utility.h"
+#include "span.h"
 using namespace lightstep;
 
 int main(int argc, char* argv[]) try { 
@@ -12,10 +14,14 @@ int main(int argc, char* argv[]) try {
   }
   auto config = ParseConfiguration(argv[1]);
   auto tracer = MakeTracer(config);
-  auto span = tracer->StartSpan("abc");
-  span->Finish();
-  tracer->Close();
-  return 0; 
+  auto t1 = std::chrono::steady_clock::now();
+  GenerateSpans(*tracer, config);
+  auto t2 = std::chrono::steady_clock::now();
+  std::cout
+      << "duration = "
+      << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count()
+      << "\n";
+  return 0;
 } catch (const std::exception& e) {
   std::cerr << e.what() << "\n";
   return -1;
