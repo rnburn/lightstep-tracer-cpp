@@ -47,7 +47,11 @@ lightstep_cc_library(
 cc_binary(
     name = "lightstep_plugin.so",
     linkshared = 1,
+    linkopts = [
+        "-Wl,--version-script=$(location :export.ld)",
+    ],
     deps = [
+        ":export.ld",
         "//:tracer_lib",
     ],
 )
