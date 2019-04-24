@@ -31,7 +31,7 @@ static std::vector<std::pair<std::string, uint16_t>> GetSatelliteEndpoints(
 //--------------------------------------------------------------------------------------------------
 // MakeTracerOptions
 //--------------------------------------------------------------------------------------------------
-static opentracing::expected<LightStepTracerOptions> MakeTracerOptions(
+opentracing::expected<LightStepTracerOptions> MakeTracerOptions(
     const char* configuration, std::string& error_message) {
   tracer_configuration::TracerConfiguration tracer_configuration;
   auto parse_result = google::protobuf::util::JsonStringToMessage(

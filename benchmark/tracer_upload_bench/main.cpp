@@ -3,6 +3,7 @@
 #include <iostream>
 #include <chrono>
 
+#include "benchmark_report.h"
 #include "utility.h"
 #include "span.h"
 using namespace lightstep;
@@ -13,14 +14,17 @@ int main(int argc, char* argv[]) try {
     return 1;
   }
   auto config = ParseConfiguration(argv[1]);
-  auto tracer = MakeTracer(config);
+  std::shared_ptr<opentracing::Tracer> tracer;
+  SpanDropCounter* span_drop_counter;
+  std::tie(tracer, span_drop_counter) = MakeTracer(config);
   auto t1 = std::chrono::steady_clock::now();
   GenerateSpans(*tracer, config);
   auto t2 = std::chrono::steady_clock::now();
-  std::cout
-      << "duration = "
-      << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count()
-      << "\n";
+  BenchmarkReport report;
+  report.num_spans_generated = config.num_spans_per_thread() * config.num_threads();
+  report.num_dropped_spans = span_drop_counter->num_dropped_spans();
+  report.duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1);
+  std::cout << report;
   return 0;
 } catch (const std::exception& e) {
   std::cerr << e.what() << "\n";
