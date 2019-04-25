@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <chrono>
+#include <thread>
 
 #include "benchmark_report.h"
 #include "utility.h"
@@ -17,6 +18,8 @@ int main(int argc, char* argv[]) try {
   std::shared_ptr<opentracing::Tracer> tracer;
   SpanDropCounter* span_drop_counter;
   std::tie(tracer, span_drop_counter) = MakeTracer(config);
+  std::this_thread::sleep_for(std::chrono::milliseconds{
+      static_cast<int>(1000 * config.startup_delay())});
   auto t1 = std::chrono::steady_clock::now();
   GenerateSpans(*tracer, config);
   auto t2 = std::chrono::steady_clock::now();

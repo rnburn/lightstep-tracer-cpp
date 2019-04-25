@@ -10,4 +10,5 @@ message Configuration {
   int32 num_threads = 3;
   double spans_per_second = 4;
   int32 payload_size = 5;
+  double startup_delay = 6;
 }
