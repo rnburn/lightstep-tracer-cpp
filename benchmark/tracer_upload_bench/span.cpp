@@ -1,8 +1,12 @@
 #include "span.h"
 
+#include <array>
 #include <chrono>
 #include <vector>
 #include <thread>
+#include <cstddef>
+#include <cstdio>
+#include <cassert>
 
 #include "test/recorder/in_memory_recorder.h"
 #include "tracer/lightstep_tracer_impl.h"
@@ -13,7 +17,14 @@ namespace lightstep {
 //--------------------------------------------------------------------------------------------------
 static std::unique_ptr<opentracing::Span> MakeBenchmarkSpan(
     opentracing::Tracer& tracer, const char* payload) {
-  auto span = tracer.StartSpan("abc");
+  static std::atomic<uint32_t> SpanCounter{0};
+  auto id = SpanCounter++;
+  std::array<char, 8+1> operation_name;
+  auto operation_name_length =
+      std::snprintf(operation_name.data(), operation_name.size(), "%08X", id);
+  assert(operation_name_length > 0);
+  auto span = tracer.StartSpan(opentracing::string_view{
+      operation_name.data(), static_cast<size_t>(operation_name_length)});
   if (payload != nullptr) {
     span->SetTag("payload", payload);
   }

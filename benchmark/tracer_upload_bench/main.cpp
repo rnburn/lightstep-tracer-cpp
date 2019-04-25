@@ -24,6 +24,7 @@ int main(int argc, char* argv[]) try {
   report.num_spans_generated = config.num_spans_per_thread() * config.num_threads();
   report.num_dropped_spans = span_drop_counter->num_dropped_spans();
   report.duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1);
+  report.approx_span_size = static_cast<int>(ComputeSpanSize(config));
   std::cout << report;
   return 0;
 } catch (const std::exception& e) {
