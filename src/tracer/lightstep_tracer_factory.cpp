@@ -72,6 +72,8 @@ opentracing::expected<LightStepTracerOptions> MakeTracerOptions(
 
   options.satellite_endpoints = GetSatelliteEndpoints(tracer_configuration);
 
+  options.verbose = tracer_configuration.verbose();
+
   return options;
 }
 
