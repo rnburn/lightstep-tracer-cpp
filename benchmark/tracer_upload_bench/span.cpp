@@ -36,11 +36,14 @@ static std::unique_ptr<opentracing::Span> MakeBenchmarkSpan(
 //------------------------------------------------------------------------------
 static void GenerateSpansForThread(
     opentracing::Tracer& tracer, int num_spans,
-    std::chrono::system_clock::duration min_span_elapse, const char* payload) {
+    std::chrono::nanoseconds min_span_elapse, const char* payload) {
   auto start_timestamp = std::chrono::system_clock::now();
   for (int i = 0; i < num_spans; ++i) {
     MakeBenchmarkSpan(tracer, payload);
-    std::this_thread::sleep_until(start_timestamp + min_span_elapse * i);
+    std::this_thread::sleep_until(
+        start_timestamp +
+        std::chrono::duration_cast<std::chrono::system_clock::duration>(
+            min_span_elapse * i));
   }
 }
 
@@ -50,9 +53,8 @@ static void GenerateSpansForThread(
 void GenerateSpans(opentracing::Tracer& tracer, const tracer_upload_bench::Configuration& config) {
   auto seconds_per_span = 1.0 / config.spans_per_second();
   auto min_span_elapse =
-      std::chrono::duration_cast<std::chrono::system_clock::duration>(
-          std::chrono::microseconds{
-              static_cast<size_t>(seconds_per_span * 1e6)});
+          std::chrono::nanoseconds{
+              static_cast<size_t>(seconds_per_span * 1.0e9)};
   std::string payload;
   const char* payload_ptr = nullptr;
   if (config.payload_size() > 0) {
