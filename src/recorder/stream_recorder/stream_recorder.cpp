@@ -136,11 +136,7 @@ void StreamRecorder::Poll() noexcept {
 //--------------------------------------------------------------------------------------------------
 std::unique_ptr<Recorder> MakeStreamRecorder(
     Logger& logger, LightStepTracerOptions&& tracer_options) {
-  if (tracer_options.use_span_v2) {
-    return std::unique_ptr<Recorder>{
-        new StreamRecorder2{logger, std::move(tracer_options)}};
-  }
   return std::unique_ptr<Recorder>{
-      new StreamRecorder{logger, std::move(tracer_options)}};
+      new StreamRecorder2{logger, std::move(tracer_options)}};
 }
 }  // namespace lightstep
