@@ -45,16 +45,6 @@ lightstep_cc_library(
     ],
 )
 
-# lightstep_cc_library(
-#     name = "circular_buffer_lib",
-#     private_hdrs = [
-#         "circular_buffer.h",
-#     ],
-#     srcs = [
-#         "circular_buffer.cpp",
-#     ],
-# )
-
 lightstep_cc_library(
     name = "circular_buffer2_lib",
     private_hdrs = [

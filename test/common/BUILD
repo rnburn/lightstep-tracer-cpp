@@ -18,16 +18,6 @@ lightstep_catch_test(
 )
 
 lightstep_catch_test(
-    name = "bipart_memory_stream_test",
-    srcs = [
-        "bipart_memory_stream_test.cpp",
-    ],
-    deps = [
-        "//src/common:bipart_memory_stream_lib",
-    ],
-)
-
-lightstep_catch_test(
     name = "circular_buffer2_test",
     srcs = [
         "circular_buffer2_test.cpp",
