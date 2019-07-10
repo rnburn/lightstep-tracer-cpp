@@ -15,6 +15,7 @@
 #include <unistd.h>
 
 namespace lightstep {
+#if 0
 //--------------------------------------------------------------------------------------------------
 // constructor
 //--------------------------------------------------------------------------------------------------
@@ -260,4 +261,5 @@ void SatelliteConnection::OnSocketError() noexcept try {
   streamer_.logger().Error("OnSocketError failed: ", e.what());
   return HandleFailure();
 }
+#endif
 }  // namespace lightstep

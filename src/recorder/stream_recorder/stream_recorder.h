@@ -6,7 +6,6 @@
 #include <mutex>
 #include <thread>
 
-#include "common/chunk_circular_buffer.h"
 #include "common/logger.h"
 #include "common/noncopyable.h"
 #include "lightstep/tracer.h"
@@ -14,7 +13,6 @@
 #include "network/timer_event.h"
 #include "recorder/fork_aware_recorder.h"
 #include "recorder/stream_recorder.h"
-#include "recorder/stream_recorder/satellite_streamer.h"
 #include "recorder/stream_recorder/stream_recorder_metrics.h"
 #include "recorder/stream_recorder/stream_recorder_options.h"
 

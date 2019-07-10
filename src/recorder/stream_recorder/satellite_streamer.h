@@ -12,6 +12,7 @@
 #include "recorder/stream_recorder/stream_recorder_metrics.h"
 
 namespace lightstep {
+#if 0
 class SatelliteStreamer : private Noncopyable {
  public:
   SatelliteStreamer(Logger& logger, EventBase& event_base,
@@ -85,4 +86,5 @@ class SatelliteStreamer : private Noncopyable {
 
   void OnEndpointManagerReady() noexcept;
 };
+#endif
 }  // namespace lightstep

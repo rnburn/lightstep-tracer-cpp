@@ -7,6 +7,7 @@
 #include "recorder/stream_recorder/utility.h"
 
 namespace lightstep {
+#if 0
 //--------------------------------------------------------------------------------------------------
 // constructor
 //--------------------------------------------------------------------------------------------------
@@ -58,4 +59,5 @@ void SatelliteStreamer::OnEndpointManagerReady() noexcept {
     connection->Start();
   }
 }
+#endif
 }  // namespace lightstep

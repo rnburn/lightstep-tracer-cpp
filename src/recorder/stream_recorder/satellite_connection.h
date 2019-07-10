@@ -8,6 +8,7 @@
 #include "recorder/stream_recorder/status_line_parser.h"
 
 namespace lightstep {
+#if 0
 class SatelliteStreamer;
 
 class SatelliteConnection : private Noncopyable {
@@ -65,4 +66,5 @@ class SatelliteConnection : private Noncopyable {
 
   void OnSocketError() noexcept;
 };
+#endif
 }  // namespace lightstep
