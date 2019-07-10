@@ -45,20 +45,19 @@ lightstep_cc_library(
     ],
 )
 
-lightstep_cc_library(
-    name = "fragment_span_input_stream_lib",
-    private_hdrs = [
-        "fragment_span_input_stream.h",
-    ],
-    srcs = [
-        "fragment_span_input_stream.cpp",
-    ],
-    deps = [
-        "//src/common:circular_buffer_lib",
-        "//src/common:fragment_array_input_stream_lib",
-        ":utility_lib",
-    ],
-)
+# lightstep_cc_library(
+#     name = "fragment_span_input_stream_lib",
+#     private_hdrs = [
+#         "fragment_span_input_stream.h",
+#     ],
+#     srcs = [
+#         "fragment_span_input_stream.cpp",
+#     ],
+#     deps = [
+#         "//src/common:fragment_array_input_stream_lib",
+#         ":utility_lib",
+#     ],
+# )
 
 
 lightstep_cc_library(
@@ -77,7 +76,6 @@ lightstep_cc_library(
         ":embedded_metrics_message_lib",
         ":span_stream2_lib",
         ":stream_recorder_metrics_lib",
-        ":fragment_span_input_stream_lib",
     ],
 )
 
@@ -186,7 +184,6 @@ lightstep_cc_library(
         "//lightstep-tracer-common:collector_proto_cc",
         "//src/common:protobuf_lib",
         "//src/common:utility_lib",
-        "//src/common:circular_buffer_lib",
         "//src/common:fragment_array_input_stream_lib",
     ],
 )
