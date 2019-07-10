@@ -17,7 +17,6 @@ lightstep_cc_library(
     deps = [
         "//lightstep-tracer-common:collector_proto_cc",
         "//src/common:utility_lib",
-        "//src/common:chunk_circular_buffer_lib",
         "//src/network:socket_lib",
         "//src/common:fragment_input_stream_lib",
         "//src/common:serialization_lib",
