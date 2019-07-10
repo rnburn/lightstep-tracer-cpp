@@ -102,6 +102,7 @@ static std::shared_ptr<opentracing::Tracer> MakeRpcTracer() {
 //--------------------------------------------------------------------------------------------------
 // MakeStreamTracer
 //--------------------------------------------------------------------------------------------------
+#if 0
 static std::shared_ptr<opentracing::Tracer> MakeStreamTracer() {
   lightstep::LightStepTracerOptions tracer_options;
   lightstep::StreamRecorderOptions recorder_options;
@@ -115,6 +116,7 @@ static std::shared_ptr<opentracing::Tracer> MakeStreamTracer() {
   return std::make_shared<lightstep::LegacyTracerImpl>(
       logger, propagation_options, std::move(recorder));
 }
+#endif
 
 static std::shared_ptr<opentracing::Tracer> MakeStreamTracer2() {
   lightstep::LightStepTracerOptions tracer_options;
@@ -139,7 +141,7 @@ static std::shared_ptr<opentracing::Tracer> MakeTracer(
     return MakeRpcTracer();
   }
   if (tracer_type == "stream") {
-    return MakeStreamTracer();
+    return MakeStreamTracer2();
   }
   if (tracer_type == "stream2") {
     return MakeStreamTracer2();

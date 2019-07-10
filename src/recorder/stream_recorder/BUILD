@@ -127,8 +127,6 @@ lightstep_cc_library(
     srcs = [
         "stream_recorder.cpp",
         "stream_recorder2.cpp",
-        "stream_recorder_impl.h",
-        "stream_recorder_impl.cpp",
         "stream_recorder_impl2.h",
         "stream_recorder_impl2.cpp",
     ],

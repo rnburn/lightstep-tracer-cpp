@@ -26,6 +26,7 @@ static void GenerateSpans(std::atomic<bool>& stop,
   }
 }
 
+#if 0
 TEST_CASE("StreamRecorder") {
   std::unique_ptr<MockSatelliteHandle> mock_satellite{new MockSatelliteHandle{
       static_cast<uint16_t>(PortAssignments::StreamRecorderTest)}};
@@ -179,6 +180,7 @@ TEST_CASE("StreamRecorder") {
     generator.join();
   }
 }
+#endif
 
 TEST_CASE("StreamRecorder2") {
   std::unique_ptr<MockSatelliteHandle> mock_satellite{new MockSatelliteHandle{

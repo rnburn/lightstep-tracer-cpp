@@ -6,8 +6,6 @@
 #include <mutex>
 #include <thread>
 
-#include "stream_recorder_impl.h"
-
 #include "common/chunk_circular_buffer.h"
 #include "common/logger.h"
 #include "common/noncopyable.h"
@@ -21,6 +19,7 @@
 #include "recorder/stream_recorder/stream_recorder_options.h"
 
 namespace lightstep {
+#if 0
 /**
  * A Recorder that load balances and streams spans to multiple satellites.
  */
@@ -108,4 +107,5 @@ class StreamRecorder final : public ForkAwareRecorder, private Noncopyable {
 
   std::unique_ptr<StreamRecorderImpl> stream_recorder_impl_;
 };
+#endif
 }  // namespace lightstep
