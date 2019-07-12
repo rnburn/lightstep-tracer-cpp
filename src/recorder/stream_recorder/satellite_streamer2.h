@@ -20,7 +20,7 @@ class SatelliteStreamer2 : private Noncopyable {
                      const LightStepTracerOptions& tracer_options,
                      const StreamRecorderOptions& recorder_options,
                      StreamRecorderMetrics& metrics,
-                     CircularBuffer2<SerializationChain>& span_buffer);
+                     CircularBuffer<SerializationChain>& span_buffer);
 
   /**
    * @return the associated Logger.
@@ -80,7 +80,7 @@ class SatelliteStreamer2 : private Noncopyable {
   const StreamRecorderOptions& recorder_options_;
   std::string header_common_fragment_;
   SatelliteEndpointManager endpoint_manager_;
-  CircularBuffer2<SerializationChain>& span_buffer_;
+  CircularBuffer<SerializationChain>& span_buffer_;
   SpanStream2 span_stream_;
   std::vector<std::unique_ptr<SatelliteConnection2>> connections_;
   RandomTraverser connection_traverser_;

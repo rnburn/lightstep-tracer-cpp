@@ -66,7 +66,7 @@ std::string ToString(const FragmentInputStream& fragment_input_stream);
  * @param s the string to add.
  * @return true if the string was succesfully added.
  */
-bool AddString(CircularBuffer2<SerializationChain>& buffer,
+bool AddString(CircularBuffer<SerializationChain>& buffer,
                const std::string& s);
 
 /**

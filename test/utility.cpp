@@ -104,7 +104,7 @@ std::string ToString(const FragmentInputStream& fragment_input_stream) {
 //--------------------------------------------------------------------------------------------------
 // AddString
 //--------------------------------------------------------------------------------------------------
-bool AddString(CircularBuffer2<SerializationChain>& buffer,
+bool AddString(CircularBuffer<SerializationChain>& buffer,
                const std::string& s) {
   std::unique_ptr<SerializationChain> chain{new SerializationChain{}};
   {

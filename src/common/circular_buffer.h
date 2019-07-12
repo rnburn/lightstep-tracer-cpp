@@ -13,9 +13,9 @@ namespace lightstep {
  * and a single consumer.
  */
 template <class T>
-class CircularBuffer2 {
+class CircularBuffer {
  public:
-  explicit CircularBuffer2(size_t max_size) noexcept
+  explicit CircularBuffer(size_t max_size) noexcept
       : data_{new AtomicUniquePtr<T>[max_size + 1]}, capacity_{max_size + 1} {}
 
   /**
@@ -24,7 +24,7 @@ class CircularBuffer2 {
    * Note: This method must only be called from the consumer thread.
    */
   CircularBufferRange<const AtomicUniquePtr<T>> Peek() const noexcept {
-    return const_cast<CircularBuffer2*>(this)->PeekImpl();
+    return const_cast<CircularBuffer*>(this)->PeekImpl();
   }
 
   /**

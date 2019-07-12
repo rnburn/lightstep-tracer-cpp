@@ -11,7 +11,7 @@ namespace lightstep {
  */
 class SpanStream2 final : public FragmentInputStream {
  public:
-  SpanStream2(CircularBuffer2<SerializationChain>& span_buffer,
+  SpanStream2(CircularBuffer<SerializationChain>& span_buffer,
               StreamRecorderMetrics& metrics) noexcept;
 
   /**
@@ -40,7 +40,7 @@ class SpanStream2 final : public FragmentInputStream {
   void Seek(int fragment_index, int position) noexcept override;
 
  private:
-  CircularBuffer2<SerializationChain>& span_buffer_;
+  CircularBuffer<SerializationChain>& span_buffer_;
   StreamRecorderMetrics& metrics_;
   CircularBufferRange<const AtomicUniquePtr<SerializationChain>> allotment_;
   std::unique_ptr<SerializationChain> remnant_;

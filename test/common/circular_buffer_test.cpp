@@ -8,7 +8,7 @@ using namespace lightstep;
 
 static thread_local std::mt19937 RandomNumberGenerator{std::random_device{}()};
 
-static void GenerateRandomNumbers(CircularBuffer2<uint32_t>& buffer,
+static void GenerateRandomNumbers(CircularBuffer<uint32_t>& buffer,
                                   std::vector<uint32_t>& numbers, int n) {
   for (int i = 0; i < n; ++i) {
     auto value = static_cast<uint32_t>(RandomNumberGenerator());
@@ -19,7 +19,7 @@ static void GenerateRandomNumbers(CircularBuffer2<uint32_t>& buffer,
   }
 }
 
-static void RunNumberProducers(CircularBuffer2<uint32_t>& buffer,
+static void RunNumberProducers(CircularBuffer<uint32_t>& buffer,
                                std::vector<uint32_t>& numbers, int num_threads,
                                int n) {
   std::vector<std::vector<uint32_t>> thread_numbers(num_threads);
@@ -38,7 +38,7 @@ static void RunNumberProducers(CircularBuffer2<uint32_t>& buffer,
   }
 }
 
-void RunNumberConsumer(CircularBuffer2<uint32_t>& buffer,
+void RunNumberConsumer(CircularBuffer<uint32_t>& buffer,
                        std::atomic<bool>& exit,
                        std::vector<uint32_t>& numbers) {
   while (true) {
@@ -62,7 +62,7 @@ void RunNumberConsumer(CircularBuffer2<uint32_t>& buffer,
 }
 
 TEST_CASE("CircularBuffer") {
-  CircularBuffer2<int> buffer{10};
+  CircularBuffer<int> buffer{10};
 
   SECTION("We can add values into a circular buffer") {
     std::unique_ptr<int> x{new int{11}};
@@ -117,7 +117,7 @@ TEST_CASE("Verify CircularBuffer behaves correctly through simulation") {
   const int num_producer_threads = 4;
   const int n = 25000;
   for (size_t max_size : {1, 2, 10, 50, 100, 1000}) {
-    CircularBuffer2<uint32_t> buffer{max_size};
+    CircularBuffer<uint32_t> buffer{max_size};
     std::vector<uint32_t> producer_numbers;
     std::vector<uint32_t> consumer_numbers;
     auto producers =

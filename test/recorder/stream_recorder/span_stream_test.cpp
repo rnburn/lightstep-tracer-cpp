@@ -9,7 +9,7 @@ using namespace lightstep;
 
 TEST_CASE("SpanStream") {
   const size_t max_spans = 10;
-  CircularBuffer2<SerializationChain> buffer{max_spans};
+  CircularBuffer<SerializationChain> buffer{max_spans};
   MetricsObserver metrics_observer;
   StreamRecorderMetrics metrics{metrics_observer};
   SpanStream2 span_stream{buffer, metrics};

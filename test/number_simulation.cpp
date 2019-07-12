@@ -47,7 +47,7 @@ GenerateRandomBinaryNumber(size_t max_digits) {
 // GenerateRandomBinaryNumbers
 //--------------------------------------------------------------------------------------------------
 static void GenerateRandomBinaryNumbers(
-    CircularBuffer2<SerializationChain>& buffer, std::vector<uint32_t>& numbers,
+    CircularBuffer<SerializationChain>& buffer, std::vector<uint32_t>& numbers,
     size_t n) {
   while (n-- != 0) {
     uint32_t x;
@@ -163,7 +163,7 @@ static bool HasPendingData(ConnectionStream2& connection_stream) {
 //--------------------------------------------------------------------------------------------------
 // RunBinaryNumberProducer
 //--------------------------------------------------------------------------------------------------
-void RunBinaryNumberProducer(CircularBuffer2<SerializationChain>& buffer,
+void RunBinaryNumberProducer(CircularBuffer<SerializationChain>& buffer,
                              std::vector<uint32_t>& numbers, size_t num_threads,
                              size_t n) {
   std::vector<std::vector<uint32_t>> thread_numbers(num_threads);

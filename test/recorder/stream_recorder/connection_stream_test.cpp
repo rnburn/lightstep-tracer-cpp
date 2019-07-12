@@ -33,7 +33,7 @@ static collector::ReportRequest ParseStreamHeader(std::string& s) {
 
 TEST_CASE("ConnectionStream") {
   LightStepTracerOptions tracer_options;
-  CircularBuffer2<SerializationChain> span_buffer{1000};
+  CircularBuffer<SerializationChain> span_buffer{1000};
   MetricsObserver metrics_observer;
   StreamRecorderMetrics metrics{metrics_observer};
   SpanStream2 span_stream{span_buffer, metrics};
@@ -252,7 +252,7 @@ TEST_CASE(
   const size_t num_connections = 10;
   const size_t n = 25000;
   for (size_t max_size : {1, 2, 10, 100, 1000}) {
-    CircularBuffer2<SerializationChain> buffer{max_size};
+    CircularBuffer<SerializationChain> buffer{max_size};
     SpanStream2 span_stream{buffer, metrics};
     std::vector<ConnectionStream2> connection_streams;
     connection_streams.reserve(num_connections);

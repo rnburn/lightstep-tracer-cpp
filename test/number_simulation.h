@@ -20,7 +20,7 @@ namespace lightstep {
  * @param num_threads the number of threads to write numbers on.
  * @param n the number of numbers to write.
  */
-void RunBinaryNumberProducer(CircularBuffer2<SerializationChain>& buffer,
+void RunBinaryNumberProducer(CircularBuffer<SerializationChain>& buffer,
                              std::vector<uint32_t>& numbers, size_t num_threads,
                              size_t n);
 

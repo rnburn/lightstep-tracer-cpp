@@ -73,7 +73,7 @@ class StreamRecorder2 : public ForkAwareRecorder, private Noncopyable {
   /**
    * @return the associated span buffer.
    */
-  CircularBuffer2<SerializationChain>& span_buffer() noexcept {
+  CircularBuffer<SerializationChain>& span_buffer() noexcept {
     return span_buffer_;
   }
 
@@ -95,7 +95,7 @@ class StreamRecorder2 : public ForkAwareRecorder, private Noncopyable {
   LightStepTracerOptions tracer_options_;
   StreamRecorderOptions recorder_options_;
   StreamRecorderMetrics metrics_;
-  CircularBuffer2<SerializationChain> span_buffer_;
+  CircularBuffer<SerializationChain> span_buffer_;
 
   std::atomic<bool> exit_{false};
 
