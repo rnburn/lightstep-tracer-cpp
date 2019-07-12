@@ -6,7 +6,7 @@
 #include <tuple>
 #include <vector>
 
-#include "common/circular_buffer2.h"
+#include "common/circular_buffer.h"
 #include "common/serialization_chain.h"
 #include "recorder/stream_recorder/connection_stream2.h"
 

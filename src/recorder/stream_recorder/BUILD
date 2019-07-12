@@ -38,7 +38,7 @@ lightstep_cc_library(
         "span_stream2.cpp",
     ],
     deps = [
-        "//src/common:circular_buffer2_lib",
+        "//src/common:circular_buffer_lib",
         "//src/common:serialization_chain_lib",
         "//src/common:fragment_input_stream_lib",
         ":stream_recorder_metrics_lib",
@@ -76,7 +76,7 @@ lightstep_cc_library(
         "stream_recorder_impl2.cpp",
     ],
     deps = [
-        "//src/common:circular_buffer2_lib",
+        "//src/common:circular_buffer_lib",
         "//src/common:logger_lib",
         "//src/common:noncopyable_lib",
         "//src/common:protobuf_lib",

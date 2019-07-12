@@ -33,9 +33,9 @@ lightstep_cc_library(
 )
 
 lightstep_cc_library(
-    name = "circular_buffer2_lib",
+    name = "circular_buffer_lib",
     private_hdrs = [
-        "circular_buffer2.h",
+        "circular_buffer.h",
     ],
     deps = [
         ":circular_buffer_range_lib",

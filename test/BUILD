@@ -21,7 +21,7 @@ lightstep_cc_library(
         "//src/common:fragment_input_stream_lib",
         "//src/common:serialization_lib",
         "//src/common:serialization_chain_lib",
-        "//src/common:circular_buffer2_lib",
+        "//src/common:circular_buffer_lib",
     ],
     external_deps = [
         "@io_opentracing_cpp//:opentracing",
@@ -54,7 +54,7 @@ lightstep_cc_library(
         "number_simulation.cpp",
     ],
     deps = [
-        "//src/common:circular_buffer2_lib",
+        "//src/common:circular_buffer_lib",
         "//src/common:utility_lib",
         "//src/recorder/stream_recorder:connection_stream2_lib",
         ":utility_lib",

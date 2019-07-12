@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/circular_buffer2.h"
+#include "common/circular_buffer.h"
 #include "common/serialization_chain.h"
 #include "recorder/stream_recorder/stream_recorder_metrics.h"
 

@@ -3,7 +3,7 @@
 #include <chrono>
 #include <thread>
 
-#include "common/circular_buffer2.h"
+#include "common/circular_buffer.h"
 #include "common/fragment_input_stream.h"
 #include "common/serialization_chain.h"
 

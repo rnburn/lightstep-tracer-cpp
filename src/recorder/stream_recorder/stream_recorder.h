@@ -8,7 +8,7 @@
 
 #include "stream_recorder_impl2.h"
 
-#include "common/circular_buffer2.h"
+#include "common/circular_buffer.h"
 #include "common/logger.h"
 #include "common/noncopyable.h"
 #include "common/serialization_chain.h"

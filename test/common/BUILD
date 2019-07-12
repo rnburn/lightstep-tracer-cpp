@@ -24,7 +24,7 @@ lightstep_catch_test(
     ],
     linkopts = ["-pthread"],
     deps = [
-        "//src/common:circular_buffer2_lib",
+        "//src/common:circular_buffer_lib",
     ],
 )
 

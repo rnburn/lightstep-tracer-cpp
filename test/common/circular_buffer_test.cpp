@@ -1,4 +1,4 @@
-#include "common/circular_buffer2.h"
+#include "common/circular_buffer.h"
 
 #include <random>
 #include <thread>
