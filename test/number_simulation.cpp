@@ -11,7 +11,7 @@
 
 #include "common/utility.h"
 #include "test/utility.h"
-#include "test/zero_copy_connection_input_stream2.h"
+#include "test/zero_copy_connection_input_stream.h"
 
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>

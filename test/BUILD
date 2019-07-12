@@ -29,12 +29,12 @@ lightstep_cc_library(
 )
 
 lightstep_cc_library(
-    name = "zero_copy_connection_input_stream2_lib",
+    name = "zero_copy_connection_input_stream_lib",
     private_hdrs = [
-        "zero_copy_connection_input_stream2.h",
+        "zero_copy_connection_input_stream.h",
     ],
     srcs = [
-        "zero_copy_connection_input_stream2.cpp",
+        "zero_copy_connection_input_stream.cpp",
     ],
     deps = [
         "//src/recorder/stream_recorder:connection_stream_lib",
@@ -58,7 +58,7 @@ lightstep_cc_library(
         "//src/common:utility_lib",
         "//src/recorder/stream_recorder:connection_stream_lib",
         ":utility_lib",
-        ":zero_copy_connection_input_stream2_lib",
+        ":zero_copy_connection_input_stream_lib",
     ],
     external_deps = [
         "@io_opentracing_cpp//:opentracing",

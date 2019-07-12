@@ -1,4 +1,4 @@
-#include "test/zero_copy_connection_input_stream2.h"
+#include "test/zero_copy_connection_input_stream.h"
 
 #include <algorithm>
 #include <random>
