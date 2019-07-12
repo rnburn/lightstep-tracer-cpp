@@ -186,7 +186,7 @@ void RunBinaryNumberProducer(CircularBuffer<SerializationChain>& buffer,
 // RunBinaryNumberConnectionConsumer
 //--------------------------------------------------------------------------------------------------
 void RunBinaryNumberConnectionConsumer(
-    SpanStream2& span_stream,
+    SpanStream& span_stream,
     std::vector<ConnectionStream2>& connection_streams, std::atomic<bool>& exit,
     std::vector<uint32_t>& numbers) {
   std::vector<std::unique_ptr<ZeroCopyConnectionInputStream>> zero_copy_streams;

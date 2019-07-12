@@ -33,7 +33,7 @@ void RunBinaryNumberProducer(CircularBuffer<SerializationChain>& buffer,
  * @param numbers outputs the numbers read.
  */
 void RunBinaryNumberConnectionConsumer(
-    SpanStream2& span_stream,
+    SpanStream& span_stream,
     std::vector<ConnectionStream2>& connection_streams, std::atomic<bool>& exit,
     std::vector<uint32_t>& numbers);
 }  // namespace lightstep

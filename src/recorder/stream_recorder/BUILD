@@ -30,12 +30,12 @@ lightstep_cc_library(
 )
 
 lightstep_cc_library(
-    name = "span_stream2_lib",
+    name = "span_stream_lib",
     private_hdrs = [
-        "span_stream2.h",
+        "span_stream.h",
     ],
     srcs = [
-        "span_stream2.cpp",
+        "span_stream.cpp",
     ],
     deps = [
         "//src/common:circular_buffer_lib",
@@ -59,7 +59,7 @@ lightstep_cc_library(
         "//src/common:fragment_input_stream_lib",
         "//src/common:fragment_array_input_stream_lib",
         ":embedded_metrics_message_lib",
-        ":span_stream2_lib",
+        ":span_stream_lib",
         ":stream_recorder_metrics_lib",
     ],
 )
@@ -148,7 +148,7 @@ lightstep_cc_library(
         ":embedded_metrics_message_lib",
         ":utility_lib",
         ":host_header_lib",
-        ":span_stream2_lib",
+        ":span_stream_lib",
         ":connection_stream2_lib",
         ":status_line_parser_lib",
     ],

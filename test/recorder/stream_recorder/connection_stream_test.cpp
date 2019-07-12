@@ -1,7 +1,7 @@
 #include "recorder/stream_recorder/connection_stream2.h"
 
 #include "3rd_party/catch2/catch.hpp"
-#include "recorder/stream_recorder/span_stream2.h"
+#include "recorder/stream_recorder/span_stream.h"
 #include "recorder/stream_recorder/utility.h"
 #include "test/number_simulation.h"
 #include "test/utility.h"
@@ -36,7 +36,7 @@ TEST_CASE("ConnectionStream") {
   CircularBuffer<SerializationChain> span_buffer{1000};
   MetricsObserver metrics_observer;
   StreamRecorderMetrics metrics{metrics_observer};
-  SpanStream2 span_stream{span_buffer, metrics};
+  SpanStream span_stream{span_buffer, metrics};
   std::string header_common_fragment =
       WriteStreamHeaderCommonFragment(tracer_options, 123);
   auto host_header_fragment = MakeFragment("Host:abc\r\n");
@@ -253,7 +253,7 @@ TEST_CASE(
   const size_t n = 25000;
   for (size_t max_size : {1, 2, 10, 100, 1000}) {
     CircularBuffer<SerializationChain> buffer{max_size};
-    SpanStream2 span_stream{buffer, metrics};
+    SpanStream span_stream{buffer, metrics};
     std::vector<ConnectionStream2> connection_streams;
     connection_streams.reserve(num_connections);
     for (int i = 0; i < static_cast<int>(num_connections); ++i) {

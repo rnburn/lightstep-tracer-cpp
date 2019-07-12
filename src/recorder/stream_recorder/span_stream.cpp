@@ -1,29 +1,29 @@
-#include "recorder/stream_recorder/span_stream2.h"
+#include "recorder/stream_recorder/span_stream.h"
 
 namespace lightstep {
 //--------------------------------------------------------------------------------------------------
 // constructor
 //--------------------------------------------------------------------------------------------------
-SpanStream2::SpanStream2(CircularBuffer<SerializationChain>& span_buffer,
+SpanStream::SpanStream(CircularBuffer<SerializationChain>& span_buffer,
                          StreamRecorderMetrics& metrics) noexcept
     : span_buffer_{span_buffer}, metrics_{metrics} {}
 
 //--------------------------------------------------------------------------------------------------
 // Allot
 //--------------------------------------------------------------------------------------------------
-void SpanStream2::Allot() noexcept { allotment_ = span_buffer_.Peek(); }
+void SpanStream::Allot() noexcept { allotment_ = span_buffer_.Peek(); }
 
 //--------------------------------------------------------------------------------------------------
 // ConsumeRemnant
 //--------------------------------------------------------------------------------------------------
-std::unique_ptr<SerializationChain> SpanStream2::ConsumeRemnant() noexcept {
+std::unique_ptr<SerializationChain> SpanStream::ConsumeRemnant() noexcept {
   return std::unique_ptr<SerializationChain>{remnant_.release()};
 }
 
 //--------------------------------------------------------------------------------------------------
 // num_fragments
 //--------------------------------------------------------------------------------------------------
-int SpanStream2::num_fragments() const noexcept {
+int SpanStream::num_fragments() const noexcept {
   int result = 0;
   allotment_.ForEach([&result](
       const AtomicUniquePtr<SerializationChain>& span) noexcept {
@@ -36,7 +36,7 @@ int SpanStream2::num_fragments() const noexcept {
 //--------------------------------------------------------------------------------------------------
 // ForEachFragment
 //--------------------------------------------------------------------------------------------------
-bool SpanStream2::ForEachFragment(Callback callback) const noexcept {
+bool SpanStream::ForEachFragment(Callback callback) const noexcept {
   return allotment_.ForEach(
       [callback](const AtomicUniquePtr<SerializationChain>& span) {
         return span->ForEachFragment(callback);
@@ -46,7 +46,7 @@ bool SpanStream2::ForEachFragment(Callback callback) const noexcept {
 //--------------------------------------------------------------------------------------------------
 // Clear
 //--------------------------------------------------------------------------------------------------
-void SpanStream2::Clear() noexcept {
+void SpanStream::Clear() noexcept {
   remnant_.reset();
   metrics_.OnSpansSent(allotment_.size());
   span_buffer_.Consume(allotment_.size());
@@ -56,7 +56,7 @@ void SpanStream2::Clear() noexcept {
 //--------------------------------------------------------------------------------------------------
 // Seek
 //--------------------------------------------------------------------------------------------------
-void SpanStream2::Seek(int fragment_index, int position) noexcept {
+void SpanStream::Seek(int fragment_index, int position) noexcept {
   remnant_.reset();
   int full_span_count = 0;
   int span_count = 0;

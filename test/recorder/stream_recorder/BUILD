@@ -91,7 +91,7 @@ lightstep_catch_test(
         "span_stream_test.cpp",
     ],
     deps = [
-        "//src/recorder/stream_recorder:span_stream2_lib",
+        "//src/recorder/stream_recorder:span_stream_lib",
         "//test:utility_lib",
     ],
 )

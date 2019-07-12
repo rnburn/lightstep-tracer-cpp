@@ -9,7 +9,7 @@
 #include "common/function_ref.h"
 #include "common/utility.h"
 #include "recorder/stream_recorder/embedded_metrics_message.h"
-#include "recorder/stream_recorder/span_stream2.h"
+#include "recorder/stream_recorder/span_stream.h"
 #include "recorder/stream_recorder/stream_recorder_metrics.h"
 
 namespace lightstep {
@@ -25,7 +25,7 @@ class ConnectionStream2 {
       std::initializer_list<FragmentInputStream*> fragment_input_streams)>;
 
   ConnectionStream2(Fragment host_header_fragment,
-                    Fragment header_common_fragment, SpanStream2& span_stream);
+                    Fragment header_common_fragment, SpanStream& span_stream);
 
   /**
    * Reset so as to begin a new streaming session.
@@ -62,7 +62,7 @@ class ConnectionStream2 {
  private:
   Fragment host_header_fragment_;
   Fragment header_common_fragment_;
-  SpanStream2& span_stream_;
+  SpanStream& span_stream_;
   std::array<char, MaxChunkHeaderSize + 1>
       chunk_header_buffer_;  // Note: Use 1 greater than the actual size so that
                              // we can utilize the snprintf library functions

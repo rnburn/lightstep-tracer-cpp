@@ -7,7 +7,7 @@
 #include "common/random_traverser.h"
 #include "recorder/stream_recorder/satellite_connection2.h"
 #include "recorder/stream_recorder/satellite_endpoint_manager.h"
-#include "recorder/stream_recorder/span_stream2.h"
+#include "recorder/stream_recorder/span_stream.h"
 #include "recorder/stream_recorder/stream_recorder_metrics.h"
 
 namespace lightstep {
@@ -47,9 +47,9 @@ class SatelliteStreamer : private Noncopyable {
   }
 
   /**
-   * @return the SpanStream2 formed from the StreamRecorder's message buffer.
+   * @return the SpanStream formed from the StreamRecorder's message buffer.
    */
-  SpanStream2& span_stream() noexcept { return span_stream_; }
+  SpanStream& span_stream() noexcept { return span_stream_; }
 
   /**
    * @return the fragment with the common serialization data sent in
@@ -81,7 +81,7 @@ class SatelliteStreamer : private Noncopyable {
   std::string header_common_fragment_;
   SatelliteEndpointManager endpoint_manager_;
   CircularBuffer<SerializationChain>& span_buffer_;
-  SpanStream2 span_stream_;
+  SpanStream span_stream_;
   std::vector<std::unique_ptr<SatelliteConnection2>> connections_;
   RandomTraverser connection_traverser_;
 

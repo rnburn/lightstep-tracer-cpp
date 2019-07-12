@@ -1,4 +1,4 @@
-#include "recorder/stream_recorder/span_stream2.h"
+#include "recorder/stream_recorder/span_stream.h"
 
 #include <iostream>
 
@@ -12,7 +12,7 @@ TEST_CASE("SpanStream") {
   CircularBuffer<SerializationChain> buffer{max_spans};
   MetricsObserver metrics_observer;
   StreamRecorderMetrics metrics{metrics_observer};
-  SpanStream2 span_stream{buffer, metrics};
+  SpanStream span_stream{buffer, metrics};
 
   SECTION("When the attached buffer is empty, SpanStream has no fragments") {
     REQUIRE(span_stream.empty());

@@ -9,9 +9,9 @@ namespace lightstep {
  * Manages the stream of data comming from the circular buffer of completed
  * spans.
  */
-class SpanStream2 final : public FragmentInputStream {
+class SpanStream final : public FragmentInputStream {
  public:
-  SpanStream2(CircularBuffer<SerializationChain>& span_buffer,
+  SpanStream(CircularBuffer<SerializationChain>& span_buffer,
               StreamRecorderMetrics& metrics) noexcept;
 
   /**
