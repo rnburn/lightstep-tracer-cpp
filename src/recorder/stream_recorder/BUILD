@@ -71,8 +71,8 @@ lightstep_cc_library(
     ],
     srcs = [
         "stream_recorder.cpp",
-        "stream_recorder_impl2.h",
-        "stream_recorder_impl2.cpp",
+        "stream_recorder_impl.h",
+        "stream_recorder_impl.cpp",
     ],
     deps = [
         "//src/common:circular_buffer_lib",
@@ -86,7 +86,7 @@ lightstep_cc_library(
         "//src/recorder:stream_recorder_interface",
         ":stream_recorder_options_lib",
         ":stream_recorder_metrics_lib",
-        ":satellite_streamer2_lib",
+        ":satellite_streamer_lib",
     ],
 )
 
@@ -126,14 +126,14 @@ lightstep_cc_library(
 )
 
 lightstep_cc_library(
-    name = "satellite_streamer2_lib",
+    name = "satellite_streamer_lib",
     private_hdrs = [
         "satellite_connection2.h",
-        "satellite_streamer2.h",
+        "satellite_streamer.h",
     ],
     srcs = [
         "satellite_connection2.cpp",
-        "satellite_streamer2.cpp",
+        "satellite_streamer.cpp",
     ],
     deps = [
         ":satellite_endpoint_manager_lib",

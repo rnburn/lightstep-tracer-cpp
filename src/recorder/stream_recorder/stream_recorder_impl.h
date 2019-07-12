@@ -6,7 +6,7 @@
 #include "common/noncopyable.h"
 #include "network/event_base.h"
 #include "network/timer_event.h"
-#include "recorder/stream_recorder/satellite_streamer2.h"
+#include "recorder/stream_recorder/satellite_streamer.h"
 
 namespace lightstep {
 class StreamRecorder;
@@ -18,11 +18,11 @@ class StreamRecorder;
  * This functionality is broken out into a separate class so that the resources
  * can be brought down and resumed so as to support forking.
  */
-class StreamRecorderImpl2 : private Noncopyable {
+class StreamRecorderImpl : private Noncopyable {
  public:
-  explicit StreamRecorderImpl2(StreamRecorder& stream_recorder);
+  explicit StreamRecorderImpl(StreamRecorder& stream_recorder);
 
-  ~StreamRecorderImpl2() noexcept;
+  ~StreamRecorderImpl() noexcept;
 
  private:
   StreamRecorder& stream_recorder_;
@@ -32,7 +32,7 @@ class StreamRecorderImpl2 : private Noncopyable {
   TimerEvent poll_timer_;
   TimerEvent flush_timer_;
 
-  SatelliteStreamer2 streamer_;
+  SatelliteStreamer streamer_;
 
   std::thread thread_;
   std::atomic<bool> exit_{false};

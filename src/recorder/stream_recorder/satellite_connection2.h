@@ -8,14 +8,14 @@
 #include "recorder/stream_recorder/status_line_parser.h"
 
 namespace lightstep {
-class SatelliteStreamer2;
+class SatelliteStreamer;
 
 /**
  * Manages a connection to an individual statellite.
  */
 class SatelliteConnection2 : private Noncopyable {
  public:
-  explicit SatelliteConnection2(SatelliteStreamer2& streamer);
+  explicit SatelliteConnection2(SatelliteStreamer& streamer);
 
   ~SatelliteConnection2() noexcept;
 
@@ -37,7 +37,7 @@ class SatelliteConnection2 : private Noncopyable {
   bool ready() const noexcept;
 
  private:
-  SatelliteStreamer2& streamer_;
+  SatelliteStreamer& streamer_;
   HostHeader host_header_;
   ConnectionStream2 connection_stream_;
   StatusLineParser status_line_parser_;

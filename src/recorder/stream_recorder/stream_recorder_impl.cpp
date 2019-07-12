@@ -1,4 +1,4 @@
-#include "stream_recorder_impl2.h"
+#include "stream_recorder_impl.h"
 
 #include "recorder/stream_recorder/stream_recorder.h"
 
@@ -6,18 +6,18 @@ namespace lightstep {
 //--------------------------------------------------------------------------------------------------
 // constructor
 //--------------------------------------------------------------------------------------------------
-StreamRecorderImpl2::StreamRecorderImpl2(StreamRecorder& stream_recorder)
+StreamRecorderImpl::StreamRecorderImpl(StreamRecorder& stream_recorder)
     : stream_recorder_{stream_recorder},
       early_flush_marker_{static_cast<size_t>(
           stream_recorder_.recorder_options().max_span_buffer_bytes *
           stream_recorder_.recorder_options().early_flush_threshold)},
       poll_timer_{
           event_base_, stream_recorder_.recorder_options().polling_period,
-          MakeTimerCallback<StreamRecorderImpl2, &StreamRecorderImpl2::Poll>(),
+          MakeTimerCallback<StreamRecorderImpl, &StreamRecorderImpl::Poll>(),
           static_cast<void*>(this)},
       flush_timer_{
           event_base_, stream_recorder_.recorder_options().flushing_period,
-          MakeTimerCallback<StreamRecorderImpl2, &StreamRecorderImpl2::Flush>(),
+          MakeTimerCallback<StreamRecorderImpl, &StreamRecorderImpl::Flush>(),
           static_cast<void*>(this)},
       streamer_{stream_recorder_.logger(),
                 event_base_,
@@ -25,13 +25,13 @@ StreamRecorderImpl2::StreamRecorderImpl2(StreamRecorder& stream_recorder)
                 stream_recorder_.recorder_options(),
                 stream_recorder_.metrics(),
                 stream_recorder_.span_buffer()} {
-  thread_ = std::thread{&StreamRecorderImpl2::Run, this};
+  thread_ = std::thread{&StreamRecorderImpl::Run, this};
 }
 
 //--------------------------------------------------------------------------------------------------
 // destructor
 //--------------------------------------------------------------------------------------------------
-StreamRecorderImpl2::~StreamRecorderImpl2() noexcept {
+StreamRecorderImpl::~StreamRecorderImpl() noexcept {
   exit_ = true;
   thread_.join();
 }
@@ -39,7 +39,7 @@ StreamRecorderImpl2::~StreamRecorderImpl2() noexcept {
 //--------------------------------------------------------------------------------------------------
 // Run
 //--------------------------------------------------------------------------------------------------
-void StreamRecorderImpl2::Run() noexcept try {
+void StreamRecorderImpl::Run() noexcept try {
   event_base_.Dispatch();
 } catch (const std::exception& e) {
   stream_recorder_.logger().Error("StreamRecorder::Run failed: ", e.what());
@@ -48,7 +48,7 @@ void StreamRecorderImpl2::Run() noexcept try {
 //--------------------------------------------------------------------------------------------------
 // Poll
 //--------------------------------------------------------------------------------------------------
-void StreamRecorderImpl2::Poll() noexcept {
+void StreamRecorderImpl::Poll() noexcept {
   if (exit_) {
     try {
       // Attempt to flush any pending spans before shutting down.
@@ -78,7 +78,7 @@ void StreamRecorderImpl2::Poll() noexcept {
 //--------------------------------------------------------------------------------------------------
 // Flush
 //--------------------------------------------------------------------------------------------------
-void StreamRecorderImpl2::Flush() noexcept try {
+void StreamRecorderImpl::Flush() noexcept try {
   auto& span_buffer = stream_recorder_.span_buffer();
   if (stream_recorder_.recorder_options().throw_away_spans) {
     span_buffer.Clear();

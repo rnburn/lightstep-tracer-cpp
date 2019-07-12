@@ -1,4 +1,4 @@
-#include "recorder/stream_recorder/satellite_streamer2.h"
+#include "recorder/stream_recorder/satellite_streamer.h"
 
 #include <algorithm>
 #include <cassert>
@@ -10,7 +10,7 @@ namespace lightstep {
 //--------------------------------------------------------------------------------------------------
 // constructor
 //--------------------------------------------------------------------------------------------------
-SatelliteStreamer2::SatelliteStreamer2(
+SatelliteStreamer::SatelliteStreamer(
     Logger& logger, EventBase& event_base,
     const LightStepTracerOptions& tracer_options,
     const StreamRecorderOptions& recorder_options,
@@ -37,7 +37,7 @@ SatelliteStreamer2::SatelliteStreamer2(
 //--------------------------------------------------------------------------------------------------
 // Flush
 //--------------------------------------------------------------------------------------------------
-void SatelliteStreamer2::Flush() noexcept {
+void SatelliteStreamer::Flush() noexcept {
   if (span_buffer_.empty()) {
     return;
   }
@@ -53,7 +53,7 @@ void SatelliteStreamer2::Flush() noexcept {
 //--------------------------------------------------------------------------------------------------
 // OnEndpointManagerReady
 //--------------------------------------------------------------------------------------------------
-void SatelliteStreamer2::OnEndpointManagerReady() noexcept {
+void SatelliteStreamer::OnEndpointManagerReady() noexcept {
   for (auto& connection : connections_) {
     connection->Start();
   }

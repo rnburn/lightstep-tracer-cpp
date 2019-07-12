@@ -27,7 +27,7 @@ StreamRecorder::StreamRecorder(Logger& logger,
       recorder_options_{std::move(recorder_options)},
       metrics_{GetMetricsObserver(tracer_options_)},
       span_buffer_{tracer_options_.max_buffered_spans.value()} {
-  stream_recorder_impl_.reset(new StreamRecorderImpl2{*this});
+  stream_recorder_impl_.reset(new StreamRecorderImpl{*this});
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ void StreamRecorder::PrepareForFork() noexcept {
 // OnForkedParent
 //--------------------------------------------------------------------------------------------------
 void StreamRecorder::OnForkedParent() noexcept {
-  stream_recorder_impl_.reset(new StreamRecorderImpl2{*this});
+  stream_recorder_impl_.reset(new StreamRecorderImpl{*this});
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -101,7 +101,7 @@ void StreamRecorder::OnForkedChild() noexcept {
   num_spans_consumed_ = span_buffer_.production_count();
   pending_flush_counter_ = 0;
 
-  stream_recorder_impl_.reset(new StreamRecorderImpl2{*this});
+  stream_recorder_impl_.reset(new StreamRecorderImpl{*this});
 }
 
 //--------------------------------------------------------------------------------------------------

@@ -14,9 +14,9 @@ namespace lightstep {
 /**
  * Manages the stream of tracing data sent to a pool of satellite connections.
  */
-class SatelliteStreamer2 : private Noncopyable {
+class SatelliteStreamer : private Noncopyable {
  public:
-  SatelliteStreamer2(Logger& logger, EventBase& event_base,
+  SatelliteStreamer(Logger& logger, EventBase& event_base,
                      const LightStepTracerOptions& tracer_options,
                      const StreamRecorderOptions& recorder_options,
                      StreamRecorderMetrics& metrics,

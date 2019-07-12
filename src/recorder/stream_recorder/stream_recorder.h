@@ -6,7 +6,7 @@
 #include <mutex>
 #include <thread>
 
-#include "stream_recorder_impl2.h"
+#include "stream_recorder_impl.h"
 
 #include "common/circular_buffer.h"
 #include "common/logger.h"
@@ -109,6 +109,6 @@ class StreamRecorder : public ForkAwareRecorder, private Noncopyable {
   std::atomic<int> pending_flush_counter_{0};
   int64_t num_spans_consumed_{0};
 
-  std::unique_ptr<StreamRecorderImpl2> stream_recorder_impl_;
+  std::unique_ptr<StreamRecorderImpl> stream_recorder_impl_;
 };
 }  // namespace lightstep

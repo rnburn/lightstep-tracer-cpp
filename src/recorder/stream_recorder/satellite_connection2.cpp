@@ -9,7 +9,7 @@
 #include "common/random.h"
 #include "network/timer_event.h"
 #include "network/vector_write.h"
-#include "recorder/stream_recorder/satellite_streamer2.h"
+#include "recorder/stream_recorder/satellite_streamer.h"
 
 #include <event2/event.h>
 #include <unistd.h>
@@ -18,7 +18,7 @@ namespace lightstep {
 //--------------------------------------------------------------------------------------------------
 // constructor
 //--------------------------------------------------------------------------------------------------
-SatelliteConnection2::SatelliteConnection2(SatelliteStreamer2& streamer)
+SatelliteConnection2::SatelliteConnection2(SatelliteStreamer& streamer)
     : streamer_{streamer},
       host_header_{streamer.tracer_options()},
       connection_stream_{host_header_.fragment(),
