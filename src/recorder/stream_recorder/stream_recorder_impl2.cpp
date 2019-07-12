@@ -1,6 +1,6 @@
 #include "stream_recorder_impl2.h"
 
-#include "recorder/stream_recorder/stream_recorder2.h"
+#include "recorder/stream_recorder/stream_recorder.h"
 
 namespace lightstep {
 //--------------------------------------------------------------------------------------------------

@@ -1,5 +1,4 @@
 #include "recorder/stream_recorder/stream_recorder.h"
-#include "recorder/stream_recorder/stream_recorder2.h"
 
 #include <exception>
 

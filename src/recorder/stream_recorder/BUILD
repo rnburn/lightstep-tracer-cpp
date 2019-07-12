@@ -68,7 +68,6 @@ lightstep_cc_library(
     name = "stream_recorder_lib",
     private_hdrs = [
         "stream_recorder.h",
-        "stream_recorder2.h"
     ],
     srcs = [
         "stream_recorder.cpp",
