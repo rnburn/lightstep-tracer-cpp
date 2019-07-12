@@ -1,4 +1,4 @@
-#include "recorder/stream_recorder/connection_stream2.h"
+#include "recorder/stream_recorder/connection_stream.h"
 
 #include "3rd_party/catch2/catch.hpp"
 #include "recorder/stream_recorder/span_stream.h"
@@ -40,7 +40,7 @@ TEST_CASE("ConnectionStream") {
   std::string header_common_fragment =
       WriteStreamHeaderCommonFragment(tracer_options, 123);
   auto host_header_fragment = MakeFragment("Host:abc\r\n");
-  ConnectionStream2 connection_stream{
+  ConnectionStream connection_stream{
       host_header_fragment,
       Fragment{static_cast<void*>(&header_common_fragment[0]),
                static_cast<int>(header_common_fragment.size())},
@@ -254,7 +254,7 @@ TEST_CASE(
   for (size_t max_size : {1, 2, 10, 100, 1000}) {
     CircularBuffer<SerializationChain> buffer{max_size};
     SpanStream span_stream{buffer, metrics};
-    std::vector<ConnectionStream2> connection_streams;
+    std::vector<ConnectionStream> connection_streams;
     connection_streams.reserve(num_connections);
     for (int i = 0; i < static_cast<int>(num_connections); ++i) {
       connection_streams.emplace_back(

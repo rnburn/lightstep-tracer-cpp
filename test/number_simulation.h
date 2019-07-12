@@ -8,7 +8,7 @@
 
 #include "common/circular_buffer.h"
 #include "common/serialization_chain.h"
-#include "recorder/stream_recorder/connection_stream2.h"
+#include "recorder/stream_recorder/connection_stream.h"
 
 #include <opentracing/string_view.h>
 
@@ -34,6 +34,6 @@ void RunBinaryNumberProducer(CircularBuffer<SerializationChain>& buffer,
  */
 void RunBinaryNumberConnectionConsumer(
     SpanStream& span_stream,
-    std::vector<ConnectionStream2>& connection_streams, std::atomic<bool>& exit,
+    std::vector<ConnectionStream>& connection_streams, std::atomic<bool>& exit,
     std::vector<uint32_t>& numbers);
 }  // namespace lightstep

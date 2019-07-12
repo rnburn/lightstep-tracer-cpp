@@ -46,7 +46,7 @@ static void CopyN(std::initializer_list<FragmentInputStream*> streams, int n,
 // constructor
 //--------------------------------------------------------------------------------------------------
 ZeroCopyConnectionInputStream::ZeroCopyConnectionInputStream(
-    ConnectionStream2& stream)
+    ConnectionStream& stream)
     : stream_{stream} {}
 
 //--------------------------------------------------------------------------------------------------

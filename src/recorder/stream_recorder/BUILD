@@ -46,12 +46,12 @@ lightstep_cc_library(
 )
 
 lightstep_cc_library(
-    name = "connection_stream2_lib",
+    name = "connection_stream_lib",
     private_hdrs = [
-        "connection_stream2.h",
+        "connection_stream.h",
     ],
     srcs = [
-        "connection_stream2.cpp",
+        "connection_stream.cpp",
     ],
     deps = [
         "//src/common:function_ref_lib",
@@ -149,7 +149,7 @@ lightstep_cc_library(
         ":utility_lib",
         ":host_header_lib",
         ":span_stream_lib",
-        ":connection_stream2_lib",
+        ":connection_stream_lib",
         ":status_line_parser_lib",
     ],
 )

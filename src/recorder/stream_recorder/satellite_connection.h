@@ -3,7 +3,7 @@
 #include "common/noncopyable.h"
 #include "network/event.h"
 #include "network/socket.h"
-#include "recorder/stream_recorder/connection_stream2.h"
+#include "recorder/stream_recorder/connection_stream.h"
 #include "recorder/stream_recorder/host_header.h"
 #include "recorder/stream_recorder/status_line_parser.h"
 
@@ -39,7 +39,7 @@ class SatelliteConnection : private Noncopyable {
  private:
   SatelliteStreamer& streamer_;
   HostHeader host_header_;
-  ConnectionStream2 connection_stream_;
+  ConnectionStream connection_stream_;
   StatusLineParser status_line_parser_;
   Socket socket_{-1};
   bool writable_{false};

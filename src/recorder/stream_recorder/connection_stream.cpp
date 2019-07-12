@@ -1,4 +1,4 @@
-#include "recorder/stream_recorder/connection_stream2.h"
+#include "recorder/stream_recorder/connection_stream.h"
 
 #include <cassert>
 #include <cstdio>
@@ -38,7 +38,7 @@ static Fragment WriteChunkHeader(char* buffer, size_t buffer_size,
 //--------------------------------------------------------------------------------------------------
 // constructor
 //--------------------------------------------------------------------------------------------------
-ConnectionStream2::ConnectionStream2(Fragment host_header_fragment,
+ConnectionStream::ConnectionStream(Fragment host_header_fragment,
                                      Fragment header_common_fragment,
                                      SpanStream& span_stream)
     : host_header_fragment_{std::move(host_header_fragment)},
@@ -50,7 +50,7 @@ ConnectionStream2::ConnectionStream2(Fragment host_header_fragment,
 //--------------------------------------------------------------------------------------------------
 // Reset
 //--------------------------------------------------------------------------------------------------
-void ConnectionStream2::Reset() {
+void ConnectionStream::Reset() {
   if (!header_stream_.empty()) {
     // We weren't able to upload the metrics so add the counters back
     span_stream_.metrics().UnconsumeDroppedSpans(
@@ -66,12 +66,12 @@ void ConnectionStream2::Reset() {
 //--------------------------------------------------------------------------------------------------
 // Shutdown
 //--------------------------------------------------------------------------------------------------
-void ConnectionStream2::Shutdown() noexcept { shutting_down_ = true; }
+void ConnectionStream::Shutdown() noexcept { shutting_down_ = true; }
 
 //--------------------------------------------------------------------------------------------------
 // Flush
 //--------------------------------------------------------------------------------------------------
-bool ConnectionStream2::Flush(Writer writer) {
+bool ConnectionStream::Flush(Writer writer) {
   if (shutting_down_) {
     return FlushShutdown(writer);
   }
@@ -92,7 +92,7 @@ bool ConnectionStream2::Flush(Writer writer) {
 //--------------------------------------------------------------------------------------------------
 // InitializeStream
 //--------------------------------------------------------------------------------------------------
-void ConnectionStream2::InitializeStream() {
+void ConnectionStream::InitializeStream() {
   shutting_down_ = false;
   terminal_stream_ = {TerminalFragment};
 
@@ -117,7 +117,7 @@ void ConnectionStream2::InitializeStream() {
 //--------------------------------------------------------------------------------------------------
 // first_chunk_position
 //--------------------------------------------------------------------------------------------------
-int ConnectionStream2::first_chunk_position() const noexcept {
+int ConnectionStream::first_chunk_position() const noexcept {
   return HttpRequestCommonFragment.second + host_header_fragment_.second +
          EndOfLineFragment.second;
 }
@@ -125,7 +125,7 @@ int ConnectionStream2::first_chunk_position() const noexcept {
 //--------------------------------------------------------------------------------------------------
 // FlushShutdown
 //--------------------------------------------------------------------------------------------------
-bool ConnectionStream2::FlushShutdown(Writer writer) {
+bool ConnectionStream::FlushShutdown(Writer writer) {
   if (span_remnant_ == nullptr) {
     return writer({&header_stream_, &terminal_stream_});
   }

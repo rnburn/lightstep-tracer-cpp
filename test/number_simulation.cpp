@@ -145,7 +145,7 @@ static bool ReadBinaryNumberChunk(
 //--------------------------------------------------------------------------------------------------
 // HasPendingData
 //--------------------------------------------------------------------------------------------------
-static bool HasPendingData(ConnectionStream2& connection_stream) {
+static bool HasPendingData(ConnectionStream& connection_stream) {
   bool result = false;
   connection_stream.Flush(
       [&result](std::initializer_list<FragmentInputStream*> streams) {
@@ -187,7 +187,7 @@ void RunBinaryNumberProducer(CircularBuffer<SerializationChain>& buffer,
 //--------------------------------------------------------------------------------------------------
 void RunBinaryNumberConnectionConsumer(
     SpanStream& span_stream,
-    std::vector<ConnectionStream2>& connection_streams, std::atomic<bool>& exit,
+    std::vector<ConnectionStream>& connection_streams, std::atomic<bool>& exit,
     std::vector<uint32_t>& numbers) {
   std::vector<std::unique_ptr<ZeroCopyConnectionInputStream>> zero_copy_streams;
   zero_copy_streams.reserve(connection_streams.size());

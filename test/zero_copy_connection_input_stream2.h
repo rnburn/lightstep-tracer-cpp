@@ -1,6 +1,6 @@
 #pragma once
 
-#include "recorder/stream_recorder/connection_stream2.h"
+#include "recorder/stream_recorder/connection_stream.h"
 
 #include <google/protobuf/io/zero_copy_stream.h>
 
@@ -14,7 +14,7 @@ namespace lightstep {
 class ZeroCopyConnectionInputStream
     : public google::protobuf::io::ZeroCopyInputStream {
  public:
-  explicit ZeroCopyConnectionInputStream(ConnectionStream2& stream);
+  explicit ZeroCopyConnectionInputStream(ConnectionStream& stream);
 
   // google::protobuf::io::ZeroCopyInputStream
   bool Next(const void** data, int* size) override;
@@ -26,7 +26,7 @@ class ZeroCopyConnectionInputStream
   google::protobuf::int64 ByteCount() const override { return byte_count_; }
 
  private:
-  ConnectionStream2& stream_;
+  ConnectionStream& stream_;
   std::string buffer_;
   google::protobuf::int64 byte_count_{0};
   int position_{0};

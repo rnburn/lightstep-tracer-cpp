@@ -37,7 +37,7 @@ lightstep_cc_library(
         "zero_copy_connection_input_stream2.cpp",
     ],
     deps = [
-        "//src/recorder/stream_recorder:connection_stream2_lib",
+        "//src/recorder/stream_recorder:connection_stream_lib",
     ],
     external_deps = [
         "@com_google_protobuf//:protobuf",
@@ -56,7 +56,7 @@ lightstep_cc_library(
     deps = [
         "//src/common:circular_buffer_lib",
         "//src/common:utility_lib",
-        "//src/recorder/stream_recorder:connection_stream2_lib",
+        "//src/recorder/stream_recorder:connection_stream_lib",
         ":utility_lib",
         ":zero_copy_connection_input_stream2_lib",
     ],

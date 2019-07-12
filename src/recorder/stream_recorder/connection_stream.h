@@ -16,7 +16,7 @@ namespace lightstep {
 /**
  * Manages the data to send over a streaming satellite connection.
  */
-class ConnectionStream2 {
+class ConnectionStream {
   // Account for the size encoded in hex plus the following \r\n sequence.
   static const size_t MaxChunkHeaderSize = Num64BitHexDigits + 2;
 
@@ -24,7 +24,7 @@ class ConnectionStream2 {
   using Writer = FunctionRef<bool(
       std::initializer_list<FragmentInputStream*> fragment_input_streams)>;
 
-  ConnectionStream2(Fragment host_header_fragment,
+  ConnectionStream(Fragment host_header_fragment,
                     Fragment header_common_fragment, SpanStream& span_stream);
 
   /**
