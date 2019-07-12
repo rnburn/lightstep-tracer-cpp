@@ -3,7 +3,7 @@
 #include "3rd_party/catch2/catch.hpp"
 #include "recorder/stream_recorder/span_stream2.h"
 #include "recorder/stream_recorder/utility.h"
-#include "test/number_simulation2.h"
+#include "test/number_simulation.h"
 #include "test/utility.h"
 using namespace lightstep;
 

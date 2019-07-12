@@ -1,4 +1,4 @@
-#include "test/number_simulation2.h"
+#include "test/number_simulation.h"
 
 #include <algorithm>
 #include <array>

@@ -46,12 +46,12 @@ lightstep_cc_library(
 
 
 lightstep_cc_library(
-    name = "number_simulation2_lib",
+    name = "number_simulation_lib",
     private_hdrs = [
-        "number_simulation2.h",
+        "number_simulation.h",
     ],
     srcs = [
-        "number_simulation2.cpp",
+        "number_simulation.cpp",
     ],
     deps = [
         "//src/common:circular_buffer2_lib",
