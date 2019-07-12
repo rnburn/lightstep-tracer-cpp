@@ -8,14 +8,14 @@
 
 #include "stream_recorder_impl2.h"
 
-#include "common/circular_buffer2.h"
 #include "common/noncopyable.h"
-#include "common/serialization_chain.h"
 #include "recorder/fork_aware_recorder.h"
 #include "recorder/stream_recorder/stream_recorder_metrics.h"
 #include "recorder/stream_recorder/stream_recorder_options.h"
+#include "recorder/stream_recorder/stream_recorder.h"
 
 namespace lightstep {
+#if 0
 /**
  * TODO(rnburn): this will replace StreamRecorder when the implementation is
  * finished.
@@ -106,4 +106,5 @@ class StreamRecorder2 : public ForkAwareRecorder, private Noncopyable {
 
   std::unique_ptr<StreamRecorderImpl2> stream_recorder_impl_;
 };
+#endif
 }  // namespace lightstep

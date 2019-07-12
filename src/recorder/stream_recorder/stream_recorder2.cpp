@@ -1,6 +1,7 @@
 #include "recorder/stream_recorder/stream_recorder2.h"
 
 namespace lightstep {
+#if 0
 //--------------------------------------------------------------------------------------------------
 // GetMetricsObserver
 //--------------------------------------------------------------------------------------------------
@@ -113,4 +114,5 @@ void StreamRecorder2::Poll() noexcept {
     flush_condition_variable_.notify_all();
   }
 }
+#endif
 }  // namespace lightstep

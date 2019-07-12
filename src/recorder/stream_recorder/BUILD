@@ -45,21 +45,6 @@ lightstep_cc_library(
     ],
 )
 
-# lightstep_cc_library(
-#     name = "fragment_span_input_stream_lib",
-#     private_hdrs = [
-#         "fragment_span_input_stream.h",
-#     ],
-#     srcs = [
-#         "fragment_span_input_stream.cpp",
-#     ],
-#     deps = [
-#         "//src/common:fragment_array_input_stream_lib",
-#         ":utility_lib",
-#     ],
-# )
-
-
 lightstep_cc_library(
     name = "connection_stream2_lib",
     private_hdrs = [
@@ -87,7 +72,6 @@ lightstep_cc_library(
     ],
     srcs = [
         "stream_recorder.cpp",
-        "stream_recorder2.cpp",
         "stream_recorder_impl2.h",
         "stream_recorder_impl2.cpp",
     ],
