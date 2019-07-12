@@ -107,7 +107,7 @@ static std::shared_ptr<opentracing::Tracer> MakeStreamTracer() {
   recorder_options.throw_away_spans = true;
   auto logger = std::make_shared<lightstep::Logger>();
   logger->set_level(lightstep::LogLevel::off);
-  auto stream_recorder = new lightstep::StreamRecorder2{
+  auto stream_recorder = new lightstep::StreamRecorder{
       *logger, std::move(tracer_options), std::move(recorder_options)};
   std::unique_ptr<lightstep::Recorder> recorder{stream_recorder};
   lightstep::PropagationOptions propagation_options;

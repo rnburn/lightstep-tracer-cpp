@@ -19,7 +19,7 @@ static MetricsObserver& GetMetricsObserver(
 //--------------------------------------------------------------------------------------------------
 // constructor
 //--------------------------------------------------------------------------------------------------
-StreamRecorder2::StreamRecorder2(Logger& logger,
+StreamRecorder::StreamRecorder(Logger& logger,
                                  LightStepTracerOptions&& tracer_options,
                                  StreamRecorderOptions&& recorder_options)
     : logger_{logger},
@@ -33,7 +33,7 @@ StreamRecorder2::StreamRecorder2(Logger& logger,
 //--------------------------------------------------------------------------------------------------
 // destructor
 //--------------------------------------------------------------------------------------------------
-StreamRecorder2::~StreamRecorder2() noexcept {
+StreamRecorder::~StreamRecorder() noexcept {
   {
     std::lock_guard<std::mutex> lock_guard{flush_mutex_};
     exit_ = true;
@@ -44,7 +44,7 @@ StreamRecorder2::~StreamRecorder2() noexcept {
 //--------------------------------------------------------------------------------------------------
 // RecordSpan
 //--------------------------------------------------------------------------------------------------
-void StreamRecorder2::RecordSpan(
+void StreamRecorder::RecordSpan(
     std::unique_ptr<SerializationChain>&& span) noexcept {
   span->AddFraming();
   if (!span_buffer_.Add(span)) {
@@ -57,7 +57,7 @@ void StreamRecorder2::RecordSpan(
 //--------------------------------------------------------------------------------------------------
 // FlushWithTimeout
 //--------------------------------------------------------------------------------------------------
-bool StreamRecorder2::FlushWithTimeout(
+bool StreamRecorder::FlushWithTimeout(
     std::chrono::system_clock::duration timeout) noexcept try {
   auto num_spans_produced = span_buffer_.production_count();
   std::unique_lock<std::mutex> lock{flush_mutex_};
@@ -77,7 +77,7 @@ bool StreamRecorder2::FlushWithTimeout(
 //--------------------------------------------------------------------------------------------------
 // PrepareForFork
 //--------------------------------------------------------------------------------------------------
-void StreamRecorder2::PrepareForFork() noexcept {
+void StreamRecorder::PrepareForFork() noexcept {
   // We don't want parent and child processes to share sockets so close any open
   // connections.
   stream_recorder_impl_.reset(nullptr);
@@ -86,14 +86,14 @@ void StreamRecorder2::PrepareForFork() noexcept {
 //--------------------------------------------------------------------------------------------------
 // OnForkedParent
 //--------------------------------------------------------------------------------------------------
-void StreamRecorder2::OnForkedParent() noexcept {
+void StreamRecorder::OnForkedParent() noexcept {
   stream_recorder_impl_.reset(new StreamRecorderImpl2{*this});
 }
 
 //--------------------------------------------------------------------------------------------------
 // OnForkedChild
 //--------------------------------------------------------------------------------------------------
-void StreamRecorder2::OnForkedChild() noexcept {
+void StreamRecorder::OnForkedChild() noexcept {
   // Clear any buffered data since it will already be recorded from the parent
   // process.
   metrics_.ConsumeDroppedSpans();
@@ -107,7 +107,7 @@ void StreamRecorder2::OnForkedChild() noexcept {
 //--------------------------------------------------------------------------------------------------
 // Poll
 //--------------------------------------------------------------------------------------------------
-void StreamRecorder2::Poll() noexcept {
+void StreamRecorder::Poll() noexcept {
   auto num_spans_consumed = span_buffer_.consumption_count();
   if (num_spans_consumed > num_spans_consumed_) {
     {
@@ -124,6 +124,6 @@ void StreamRecorder2::Poll() noexcept {
 std::unique_ptr<Recorder> MakeStreamRecorder(
     Logger& logger, LightStepTracerOptions&& tracer_options) {
   return std::unique_ptr<Recorder>{
-      new StreamRecorder2{logger, std::move(tracer_options)}};
+      new StreamRecorder{logger, std::move(tracer_options)}};
 }
 }  // namespace lightstep

@@ -6,7 +6,7 @@ namespace lightstep {
 //--------------------------------------------------------------------------------------------------
 // constructor
 //--------------------------------------------------------------------------------------------------
-StreamRecorderImpl2::StreamRecorderImpl2(StreamRecorder2& stream_recorder)
+StreamRecorderImpl2::StreamRecorderImpl2(StreamRecorder& stream_recorder)
     : stream_recorder_{stream_recorder},
       early_flush_marker_{static_cast<size_t>(
           stream_recorder_.recorder_options().max_span_buffer_bytes *

@@ -25,13 +25,13 @@ namespace lightstep {
  * TODO(rnburn): this will replace StreamRecorder when the implementation is
  * finished.
  */
-class StreamRecorder2 : public ForkAwareRecorder, private Noncopyable {
+class StreamRecorder : public ForkAwareRecorder, private Noncopyable {
  public:
-  StreamRecorder2(
+  StreamRecorder(
       Logger& logger, LightStepTracerOptions&& tracer_options,
       StreamRecorderOptions&& recorder_options = StreamRecorderOptions{});
 
-  ~StreamRecorder2() noexcept override;
+  ~StreamRecorder() noexcept override;
 
   /**
    * Checks whether any threads blocked on flush calls can be resumed.

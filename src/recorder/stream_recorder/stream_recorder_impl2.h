@@ -9,7 +9,7 @@
 #include "recorder/stream_recorder/satellite_streamer2.h"
 
 namespace lightstep {
-class StreamRecorder2;
+class StreamRecorder;
 
 /**
  * Implements the part of StreamRecorder that manages the recording thread and
@@ -20,12 +20,12 @@ class StreamRecorder2;
  */
 class StreamRecorderImpl2 : private Noncopyable {
  public:
-  explicit StreamRecorderImpl2(StreamRecorder2& stream_recorder);
+  explicit StreamRecorderImpl2(StreamRecorder& stream_recorder);
 
   ~StreamRecorderImpl2() noexcept;
 
  private:
-  StreamRecorder2& stream_recorder_;
+  StreamRecorder& stream_recorder_;
 
   EventBase event_base_;
   size_t early_flush_marker_;

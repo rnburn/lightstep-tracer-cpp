@@ -25,7 +25,7 @@ static void GenerateSpans(std::atomic<bool>& stop,
   }
 }
 
-TEST_CASE("StreamRecorder2") {
+TEST_CASE("StreamRecorder") {
   std::unique_ptr<MockSatelliteHandle> mock_satellite{new MockSatelliteHandle{
       static_cast<uint16_t>(PortAssignments::StreamRecorderTest)}};
 
@@ -58,7 +58,7 @@ TEST_CASE("StreamRecorder2") {
       std::chrono::duration_cast<std::chrono::microseconds>(
           std::chrono::milliseconds{300});
 
-  auto stream_recorder = new StreamRecorder2{*logger, std::move(tracer_options),
+  auto stream_recorder = new StreamRecorder{*logger, std::move(tracer_options),
                                              std::move(recorder_options)};
   std::unique_ptr<Recorder> recorder{stream_recorder};
   PropagationOptions propagation_options;
