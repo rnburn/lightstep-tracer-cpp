@@ -5,7 +5,7 @@
 
 #include "common/noncopyable.h"
 #include "common/random_traverser.h"
-#include "recorder/stream_recorder/satellite_connection2.h"
+#include "recorder/stream_recorder/satellite_connection.h"
 #include "recorder/stream_recorder/satellite_endpoint_manager.h"
 #include "recorder/stream_recorder/span_stream.h"
 #include "recorder/stream_recorder/stream_recorder_metrics.h"
@@ -82,7 +82,7 @@ class SatelliteStreamer : private Noncopyable {
   SatelliteEndpointManager endpoint_manager_;
   CircularBuffer<SerializationChain>& span_buffer_;
   SpanStream span_stream_;
-  std::vector<std::unique_ptr<SatelliteConnection2>> connections_;
+  std::vector<std::unique_ptr<SatelliteConnection>> connections_;
   RandomTraverser connection_traverser_;
 
   void OnEndpointManagerReady() noexcept;

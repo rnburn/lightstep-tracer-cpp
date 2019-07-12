@@ -13,11 +13,11 @@ class SatelliteStreamer;
 /**
  * Manages a connection to an individual statellite.
  */
-class SatelliteConnection2 : private Noncopyable {
+class SatelliteConnection : private Noncopyable {
  public:
-  explicit SatelliteConnection2(SatelliteStreamer& streamer);
+  explicit SatelliteConnection(SatelliteStreamer& streamer);
 
-  ~SatelliteConnection2() noexcept;
+  ~SatelliteConnection() noexcept;
 
   /**
    * Start establishing a connection to a satellite.

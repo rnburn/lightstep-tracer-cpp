@@ -208,7 +208,6 @@ if (WITH_LIBEVENT)
                              src/recorder/stream_recorder/satellite_dns_resolution_manager.cpp
                              src/recorder/stream_recorder/satellite_endpoint_manager.cpp
                              src/recorder/stream_recorder/satellite_connection.cpp
-                             src/recorder/stream_recorder/satellite_connection2.cpp
                              src/recorder/stream_recorder/satellite_streamer.cpp
                              src/recorder/stream_recorder/span_stream.cpp
                              src/recorder/stream_recorder/stream_recorder_metrics.cpp

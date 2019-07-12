@@ -29,7 +29,7 @@ SatelliteStreamer::SatelliteStreamer(
       connection_traverser_{recorder_options_.num_satellite_connections} {
   connections_.reserve(recorder_options.num_satellite_connections);
   for (int i = 0; i < recorder_options.num_satellite_connections; ++i) {
-    connections_.emplace_back(new SatelliteConnection2{*this});
+    connections_.emplace_back(new SatelliteConnection{*this});
   }
   endpoint_manager_.Start();
 }
