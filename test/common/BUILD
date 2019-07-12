@@ -18,9 +18,9 @@ lightstep_catch_test(
 )
 
 lightstep_catch_test(
-    name = "circular_buffer2_test",
+    name = "circular_buffer_test",
     srcs = [
-        "circular_buffer2_test.cpp",
+        "circular_buffer_test.cpp",
     ],
     linkopts = ["-pthread"],
     deps = [
