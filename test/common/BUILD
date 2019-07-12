@@ -55,7 +55,6 @@ lightstep_catch_test(
     ],
     deps = [
         "//src/common:utility_lib",
-        "//src/common:bipart_memory_stream_lib",
     ],
 )
 

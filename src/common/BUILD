@@ -14,19 +14,6 @@ lightstep_cc_library(
 )
 
 lightstep_cc_library(
-    name = "bipart_memory_stream_lib",
-    private_hdrs = [
-        "bipart_memory_stream.h",
-    ],
-    srcs = [
-        "bipart_memory_stream.cpp",
-    ],
-    external_deps = [
-        "@com_google_protobuf//:protobuf",
-    ],
-)
-
-lightstep_cc_library(
     name = "serialization_chain_lib",
     private_hdrs = [
         "serialization_chain.h",

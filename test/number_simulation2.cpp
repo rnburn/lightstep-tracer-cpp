@@ -9,7 +9,6 @@
 #include <random>
 #include <thread>
 
-#include "common/bipart_memory_stream.h"
 #include "common/utility.h"
 #include "test/utility.h"
 #include "test/zero_copy_connection_input_stream2.h"

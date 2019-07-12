@@ -55,7 +55,6 @@ lightstep_cc_library(
     ],
     deps = [
         "//src/common:circular_buffer2_lib",
-        "//src/common:bipart_memory_stream_lib",
         "//src/common:utility_lib",
         "//src/recorder/stream_recorder:connection_stream2_lib",
         ":utility_lib",
