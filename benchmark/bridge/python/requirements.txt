@@ -1,0 +1,9 @@
+lightstep
+benchmark
+thrift>=0.10.0,<0.12.0
+jsonpickle
+six
+basictracer
+googleapis-common-protos
+requests
+protobuf

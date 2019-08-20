@@ -1,6 +1,7 @@
 load(
     "//bazel:lightstep_build_system.bzl",
     "lightstep_cc_library",
+    "lightstep_py_library",
     "lightstep_package",
 )
 
@@ -115,6 +116,13 @@ lightstep_cc_library(
     ],
     srcs = [
         "child_process_handle.cpp",
+    ],
+)
+
+lightstep_py_library(
+    name = "child_process_handle_py_lib",
+    srcs = [
+        "child_process_handle.py",
     ],
 )
 

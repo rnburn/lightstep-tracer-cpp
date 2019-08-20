@@ -2,6 +2,7 @@ load(
     "//bazel:lightstep_build_system.bzl",
     "lightstep_package",
     "lightstep_cc_library",
+    "lightstep_py_library",
     "lightstep_portable_cc_binary",
     "lightstep_catch_test",
     "lightstep_go_binary",
@@ -77,6 +78,19 @@ lightstep_cc_library(
         "//test:utility_lib",
         "//test:http_connection_lib",
         ":mock_satellite_proto_cc",
+    ],
+    data = [
+        ":mock_satellite",
+    ],
+)
+
+lightstep_py_library(
+    name = "mock_satellite_py_lib",
+    srcs = [
+        "mock_satellite_handle.py",
+    ],
+    deps = [
+        "//test:child_process_handle_py_lib",
     ],
     data = [
         ":mock_satellite",

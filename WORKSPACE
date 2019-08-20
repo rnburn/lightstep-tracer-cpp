@@ -197,3 +197,11 @@ pip_import(
 
 load("@python_pip_deps//:requirements.bzl", "pip_install")
 pip_install()
+
+pip_import(
+    name = "python_benchmark_pip_deps",
+    requirements = "//benchmark/bridge/python:requirements.txt",
+)
+
+load("@python_benchmark_pip_deps//:requirements.bzl", benchmark_pip_install = "pip_install")
+benchmark_pip_install()

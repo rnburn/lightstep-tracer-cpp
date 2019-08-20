@@ -13,4 +13,3 @@ lightstep_google_benchmark(
         "//:tracer_lib",
     ],
 )
-

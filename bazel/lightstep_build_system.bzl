@@ -265,6 +265,9 @@ def lightstep_go_binary(
       deps = deps + external_deps,
   )
 
+def lightstep_py_library(*args, **kwargs):
+  native.py_library(*args, **kwargs)
+
 def lightstep_python_wheel(
     python_tag,
     abi_tag,
